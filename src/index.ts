@@ -1,10 +1,7 @@
-import Fastify from "fastify";
+import { fastify } from "./config/fastify";
+import { authRoutes } from "./routes/auth.route";
 
-const fastify = Fastify({ logger: true });
-
-fastify.get("/", async (request, reply) => {
-  return { message: "Hello from Fastify + Bun + TypeScript!" };
-});
+fastify.register(authRoutes);
 
 const start = async () => {
   try {
@@ -17,3 +14,5 @@ const start = async () => {
 };
 
 start();
+
+export default fastify;

@@ -6,7 +6,7 @@
   "scripts": {
     "dev": "bun run src/index.ts",
     "prisma:pull": "bun prisma db pull",
-    "prisma:migrate": "bun prisma migrate dev --name initial_migration"
+    "prisma:migrate": "bun prisma migrate dev"
   },
   "devDependencies": {
     "@types/bun": "latest"
@@ -15,9 +15,17 @@
     "typescript": "^5"
   },
   "dependencies": {
+    "@fastify/cookie": "^11.0.2",
+    "@fastify/jwt": "^9.1.0",
     "@prisma/client": "^6.12.0",
+    "@sendgrid/client": "^8.1.5",
+    "@sendgrid/mail": "^8.1.5",
     "@supabase/supabase-js": "^2.52.1",
+    "@types/bcrypt": "^6.0.0",
+    "bcrypt": "^6.0.0",
+    "dotenv": "^17.2.1",
     "fastify": "^5.4.0",
-    "prisma": "^6.12.0"
+    "prisma": "^6.12.0",
+    "zod": "^4.0.10"
   }
 }

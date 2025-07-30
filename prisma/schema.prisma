@@ -18,4 +18,5 @@ model users {
   password            String?
   is_password_reseted Boolean? @default(false)
   initial_password    String?
+  verification_code   String?
 }
