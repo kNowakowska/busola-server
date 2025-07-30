@@ -4,7 +4,7 @@ import {
   getUserByEmail,
   saveUserVerificationCode,
 } from "../../services/user.service";
-import { sendEmail } from "../../config/sendGrid";
+import { sendEmail } from "../../config/resend";
 
 type ResetPasswordRequestPayload = {
   email: string;
