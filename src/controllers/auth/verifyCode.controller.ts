@@ -1,6 +1,6 @@
 import { FastifyReply, FastifyRequest } from "fastify";
 
-import { getUserByEmail } from "../../services/user.service";
+import { getUserByEmail } from "../../services/database/user.service";
 
 type VerifyCodePayload = {
   email: string;
@@ -19,7 +19,7 @@ export async function verifyCode(
   }
 
   console.log("Verifying code for user:", email, code);
-  if (!code || user.verification_code !== code) {
+  if (!code || user.verificationCode !== code) {
     return res.status(401).send({ error: "Invalid verification code" });
   }
 

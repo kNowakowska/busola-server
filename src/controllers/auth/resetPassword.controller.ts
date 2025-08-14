@@ -3,7 +3,7 @@ import { FastifyReply, FastifyRequest } from "fastify";
 import {
   getUserByEmail,
   updateUserPassword,
-} from "../../services/user.service";
+} from "../../services/database/user.service";
 import { hashPassword } from "../../utils/hashPassword";
 import { password as passwordValidator } from "../../validators/password";
 
@@ -24,7 +24,7 @@ export async function resetPassword(
     return res.status(404).send({ error: "User not found" });
   }
 
-  if (!verificationCode || user.verification_code !== verificationCode) {
+  if (!verificationCode || user.verificationCode !== verificationCode) {
     return res.status(401).send({ error: "Invalid verification code" });
   }
 

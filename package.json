@@ -4,9 +4,11 @@
   "type": "module",
   "private": true,
   "scripts": {
-    "dev": "bun run src/index.ts",
+    "dev": "clear & bun run src/index.ts",
     "prisma:pull": "bun prisma db pull",
-    "prisma:migrate": "bun prisma migrate dev"
+    "prisma:migrate": "bun prisma migrate dev",
+    "prisma:format": "bun prisma format",
+    "prisma:generate": "bun prisma generate"
   },
   "devDependencies": {
     "@types/bun": "latest"
@@ -21,6 +23,7 @@
     "@supabase/supabase-js": "^2.52.1",
     "@types/bcrypt": "^6.0.0",
     "bcrypt": "^6.0.0",
+    "contentful": "^11.7.15",
     "dotenv": "^17.2.1",
     "fastify": "^5.4.0",
     "prisma": "^6.12.0",

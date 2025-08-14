@@ -1,6 +1,6 @@
 import { FastifyInstance, FastifyReply, FastifyRequest } from "fastify";
 
-import { getUserByEmail } from "../../services/user.service";
+import { getUserByEmail } from "../../services/database/user.service";
 import { verifyPassword } from "../../utils/hashPassword";
 
 type SignInPayload = {
@@ -19,7 +19,7 @@ export async function signIn(
   if (!user) {
     return res.status(404).send({ error: "User not found" });
   }
-  if (user.is_password_reseted && user.password) {
+  if (user.isPasswordReseted && user.password) {
     console.log("User is password reseted and has password");
     if (await verifyPassword(password, user.password)) {
       console.log("Password is correct. Generating new tokens");
@@ -55,7 +55,7 @@ export async function signIn(
     }
   } else {
     console.log("User is not password reseted or does not have password");
-    if (user.initial_password === password) {
+    if (user.initialPassword === password) {
       console.log("Initial password is correct. Need to reset password");
       return res.status(200).send({ shouldResetPassword: true });
     } else {

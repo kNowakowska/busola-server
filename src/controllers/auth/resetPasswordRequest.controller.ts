@@ -3,7 +3,7 @@ import { FastifyReply, FastifyRequest } from "fastify";
 import {
   getUserByEmail,
   saveUserVerificationCode,
-} from "../../services/user.service";
+} from "../../services/database/user.service";
 import { sendEmail } from "../../config/resend";
 
 type ResetPasswordRequestPayload = {

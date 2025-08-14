@@ -8,18 +8,22 @@ import { resetPassword } from "../controllers/auth/resetPassword.controller";
 import { resetInitialPassword } from "../controllers/auth/resetInitialPassword.controller";
 import { refreshToken } from "../controllers/auth/refreshToken.controller";
 
+import { handlerWrapper } from "../utils/handlerWrapper";
+
 export async function authRoutes(fastify: FastifyInstance) {
-  fastify.post("/auth/sign-in", (req, res) => signIn(req, res, fastify));
-  fastify.post("/auth/reset-initial-password", (req, res) =>
-    resetInitialPassword(req, res, fastify)
+  fastify.post("/auth/sign-in", handlerWrapper(signIn));
+  fastify.post(
+    "/auth/reset-initial-password",
+    handlerWrapper(resetInitialPassword)
   );
-  fastify.post("/auth/refresh-token", (req, res) =>
-    refreshToken(req, res, fastify)
+  fastify.post("/auth/refresh-token", handlerWrapper(refreshToken));
+
+  fastify.post(
+    "/auth/reset-password-request",
+    handlerWrapper(resetPasswordRequest)
   );
+  fastify.post("/auth/verify-code", handlerWrapper(verifyCode));
+  fastify.post("/auth/reset-password", handlerWrapper(resetPassword));
 
-  fastify.post("/auth/reset-password-request", resetPasswordRequest);
-  fastify.post("/auth/verify-code", verifyCode);
-  fastify.post("/auth/reset-password", resetPassword);
-
-  fastify.post("/auth/sign-out", signOut);
+  fastify.post("/auth/sign-out", handlerWrapper(signOut));
 }

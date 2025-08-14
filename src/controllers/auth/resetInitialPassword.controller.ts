@@ -3,7 +3,7 @@ import { FastifyInstance, FastifyReply, FastifyRequest } from "fastify";
 import {
   getUserByEmail,
   updateUserPassword,
-} from "../../services/user.service";
+} from "../../services/database/user.service";
 import { hashPassword } from "../../utils/hashPassword";
 import { password as passwordValidator } from "../../validators/password";
 
@@ -25,7 +25,7 @@ export async function resetInitialPassword(
     return res.status(404).send({ error: "User not found" });
   }
 
-  if (user.initial_password !== initialPassword) {
+  if (user.initialPassword !== initialPassword) {
     console.log("Initial password is incorrect");
     return res.status(401).send({ error: "Invalid credentials" });
   }

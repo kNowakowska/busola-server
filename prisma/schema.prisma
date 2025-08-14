@@ -9,14 +9,84 @@ datasource db {
   directUrl = env("DIRECT_URL")
 }
 
-model users {
-  uuid                String   @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
-  created_at          DateTime @default(now()) @db.Timestamptz(6)
-  email               String   @unique
-  name                String?
-  last_name           String?
-  password            String?
-  is_password_reseted Boolean? @default(false)
-  initial_password    String?
-  verification_code   String?
+model User {
+  uuid              String         @id @unique @default(dbgenerated("gen_random_uuid()")) @db.Uuid
+  createdAt         DateTime       @default(now()) @db.Timestamptz(6)
+  email             String         @unique
+  name              String?
+  lastName          String?
+  password          String?
+  isPasswordReseted Boolean?       @default(false)
+  initialPassword   String?
+  verificationCode  String?
+  courses           UserToCourse[]
+}
+
+model Answer {
+  uuid       String    @id @unique @default(dbgenerated("gen_random_uuid()")) @db.Uuid
+  createdAt  DateTime  @default(now()) @db.Timestamptz(6)
+  text       String
+  isCorrect  Boolean
+  question   Question? @relation(fields: [questionId], references: [uuid])
+  questionId String?   @db.Uuid
+  cmsId      String @unique
+}
+
+enum QuestionType {
+  SINGLE
+  MULTIPLE
+  OPEN
+}
+
+model Question {
+  uuid      String       @id @unique @default(dbgenerated("gen_random_uuid()")) @db.Uuid
+  createdAt DateTime     @default(now()) @db.Timestamptz(6)
+  text      String
+  options   Answer[]
+  type      QuestionType @default(SINGLE)
+  quiz      Quiz?        @relation(fields: [quizId], references: [uuid])
+  quizId    String?      @db.Uuid
+  cmsId     String @unique
+}
+
+model Quiz {
+  uuid      String     @id @unique @default(dbgenerated("gen_random_uuid()")) @db.Uuid
+  createdAt DateTime   @default(now()) @db.Timestamptz(6)
+  name      String
+  questions Question[]
+  lesson    Lesson?    @relation(fields: [lessonId], references: [uuid])
+  lessonId  String?    @db.Uuid
+  cmsId     String @unique
+}
+
+model Lesson {
+  uuid         String   @id @unique @default(dbgenerated("gen_random_uuid()")) @db.Uuid
+  createdAt    DateTime @default(now()) @db.Timestamptz(6)
+  name         String
+  content      Json
+  videoUrl     String?
+  quiz         Quiz[]
+  order        Int
+  isLastLesson Boolean  @default(false)
+  course       Course?  @relation(fields: [courseId], references: [uuid])
+  courseId     String?  @db.Uuid
+  cmsId        String @unique
+}
+
+model Course {
+  uuid      String         @id @unique @default(dbgenerated("gen_random_uuid()")) @db.Uuid
+  createdAt DateTime       @default(now()) @db.Timestamptz(6)
+  name      String
+  lessons   Lesson[]
+  users     UserToCourse[]
+  cmsId     String @unique
+}
+
+model UserToCourse {
+  uuid      String   @id @unique @default(dbgenerated("gen_random_uuid()")) @db.Uuid
+  createdAt DateTime @default(now()) @db.Timestamptz(6)
+  user      User     @relation(fields: [userId], references: [uuid])
+  userId    String   @db.Uuid
+  course    Course   @relation(fields: [courseId], references: [uuid])
+  courseId  String   @db.Uuid
 }
