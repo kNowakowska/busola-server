@@ -42,9 +42,9 @@ export async function resetInitialPassword(
   await updateUserPassword(email, hashedPassword);
 
   console.log("Generating new tokens for user:", email);
-  const token = fastify.jwt.sign({ username: email });
+  const token = fastify.jwt.sign({ email, userId: user.uuid });
   const refreshToken = fastify.jwt.sign(
-    { username: email },
+    { email, userId: user.uuid },
     {
       key: process.env.JWT_REFRESH_SECRET!,
       expiresIn: "7d",
@@ -55,14 +55,14 @@ export async function resetInitialPassword(
     .setCookie("access_token", token, {
       httpOnly: true,
       secure: process.env.NODE_ENV === "production",
-      sameSite: "strict",
+      sameSite: "lax",
       path: "/",
       maxAge: 60 * 60, // 1 hour
     })
     .setCookie("refresh_token", refreshToken, {
       httpOnly: true,
       secure: process.env.NODE_ENV === "production",
-      sameSite: "strict",
+      sameSite: "lax",
       path: "/",
       maxAge: 60 * 60 * 24 * 7, // 7 days
     })

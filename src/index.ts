@@ -1,8 +1,11 @@
 import { fastify } from "./config/fastify";
 import { authRoutes } from "./routes/auth.route";
+import { userRoutes } from "./routes/user.route";
 import { webhookRoutes } from "./routes/webhook.route";
 
 fastify.register(authRoutes);
+fastify.register(userRoutes);
+
 fastify.register(webhookRoutes);
 
 const start = async () => {

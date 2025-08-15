@@ -1,6 +1,8 @@
 import Fastify from "fastify";
+
 import fastifyCookie from "@fastify/cookie";
 import fastifyJWT from "@fastify/jwt";
+import cors from "@fastify/cors";
 
 const fastify = Fastify({ logger: true });
 
@@ -11,12 +13,18 @@ fastify.register(fastifyCookie, {
     httpOnly: true,
     path: "/",
     secure: process.env.NODE_ENV === "production",
-    sameSite: "strict",
+    sameSite: "lax",
   },
 });
 
 fastify.register(fastifyJWT, {
   secret: process.env.JWT_SECRET_KEY!,
+});
+
+fastify.register(cors, {
+  origin: [process.env.FRONTEND_URL!],
+  credentials: true,
+  maxAge: 24 * 60 * 60 * 1000, // 24 hours
 });
 
 export { fastify };

@@ -9,23 +9,35 @@ type SignInPayload = {
 };
 
 export async function signIn(
-  req: FastifyRequest<{ Body: SignInPayload }>,
+  req: FastifyRequest<{ Body: string }>,
   res: FastifyReply,
   fastify: FastifyInstance
 ) {
-  const { password, email } = req.body as SignInPayload;
+  const { password, email } = JSON.parse(req.body) as SignInPayload;
+
+  if (!email || !password) {
+    console.error("Email and password are required");
+    return res.status(400).send({ error: "Email and password are required" });
+  }
 
   const user = await getUserByEmail(email);
   if (!user) {
+    console.error("User not found");
     return res.status(404).send({ error: "User not found" });
   }
+
+  if (!user.isPasswordReseted && !user.password) {
+    console.error("User is not password reseted and does not have password");
+    return res.status(401).send({ error: "Invalid credentials" });
+  }
+
   if (user.isPasswordReseted && user.password) {
     console.log("User is password reseted and has password");
     if (await verifyPassword(password, user.password)) {
       console.log("Password is correct. Generating new tokens");
-      const token = fastify.jwt.sign({ username: email });
+      const token = fastify.jwt.sign({ email, userId: user.uuid });
       const refreshToken = fastify.jwt.sign(
-        { username: email },
+        { email, userId: user.uuid },
         {
           key: process.env.JWT_REFRESH_SECRET!,
           expiresIn: "7d",
@@ -36,21 +48,21 @@ export async function signIn(
         .setCookie("access_token", token, {
           httpOnly: true,
           secure: process.env.NODE_ENV === "production",
-          sameSite: "strict",
+          sameSite: "lax",
           path: "/",
           maxAge: 60 * 60, // 1 hour
         })
         .setCookie("refresh_token", refreshToken, {
           httpOnly: true,
           secure: process.env.NODE_ENV === "production",
-          sameSite: "strict",
+          sameSite: "lax",
           path: "/",
           maxAge: 60 * 60 * 24 * 7, // 7 days
         })
         .status(200)
         .send({ shouldResetPassword: false });
     } else {
-      console.log("Password is incorrect");
+      console.error("Password is incorrect");
       return res.status(401).send({ error: "Invalid credentials" });
     }
   } else {
@@ -59,7 +71,7 @@ export async function signIn(
       console.log("Initial password is correct. Need to reset password");
       return res.status(200).send({ shouldResetPassword: true });
     } else {
-      console.log("Initial password is incorrect");
+      console.error("Initial password is incorrect");
       return res.status(401).send({ error: "Invalid credentials" });
     }
   }

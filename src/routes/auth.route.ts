@@ -11,10 +11,13 @@ import { refreshToken } from "../controllers/auth/refreshToken.controller";
 import { handlerWrapper } from "../utils/handlerWrapper";
 
 export async function authRoutes(fastify: FastifyInstance) {
-  fastify.post("/auth/sign-in", handlerWrapper(signIn));
+  fastify.post(
+    "/auth/sign-in",
+    handlerWrapper((req, res) => signIn(req, res, fastify))
+  );
   fastify.post(
     "/auth/reset-initial-password",
-    handlerWrapper(resetInitialPassword)
+    handlerWrapper((req, res) => resetInitialPassword(req, res, fastify))
   );
   fastify.post("/auth/refresh-token", handlerWrapper(refreshToken));
 

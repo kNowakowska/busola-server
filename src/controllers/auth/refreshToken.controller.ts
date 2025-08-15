@@ -19,14 +19,14 @@ export async function refreshToken(
     return res.status(401).send({ error: "Invalid refresh token" });
   }
 
-  console.log("Token verification for user:", decodedRefreshToken.username);
-  const token = fastify.jwt.sign({ username: decodedRefreshToken.username });
+  console.log("Token verification for user:", decodedRefreshToken);
+  const token = fastify.jwt.sign(decodedRefreshToken);
 
   return res
     .setCookie("access_token", token, {
       httpOnly: true,
       secure: process.env.NODE_ENV === "production",
-      sameSite: "strict",
+      sameSite: "lax",
       path: "/",
       maxAge: 60 * 60, // 1 hour
     })

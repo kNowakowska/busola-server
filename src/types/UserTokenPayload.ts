@@ -1,3 +1,4 @@
 export interface UserTokenPayload {
-  username: string;
+  email: string;
+  userId: string;
 }
