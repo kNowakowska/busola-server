@@ -11,13 +11,14 @@ type ResetPasswordRequestPayload = {
 };
 
 export async function resetPasswordRequest(
-  req: FastifyRequest<{ Body: ResetPasswordRequestPayload }>,
+  req: FastifyRequest<{ Body: string }>,
   res: FastifyReply
 ) {
-  const { email } = req.body;
+  const { email } = JSON.parse(req.body) as ResetPasswordRequestPayload;
 
   const user = await getUserByEmail(email);
   if (!user) {
+    console.error(`User not found for email: ${email}`);
     return res.status(404).send({ error: "User not found" });
   }
 

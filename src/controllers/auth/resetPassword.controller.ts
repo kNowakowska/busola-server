@@ -9,22 +9,26 @@ import { password as passwordValidator } from "../../validators/password";
 
 type ResetPasswordPayload = {
   email: string;
-  verificationCode: string;
+  code: string;
   password: string;
 };
 
 export async function resetPassword(
-  req: FastifyRequest<{ Body: ResetPasswordPayload }>,
+  req: FastifyRequest<{ Body: string }>,
   res: FastifyReply
 ) {
-  const { email, verificationCode, password } = req.body;
+  const { email, code, password } = JSON.parse(
+    req.body
+  ) as ResetPasswordPayload;
 
   const user = await getUserByEmail(email);
   if (!user) {
+    console.error(`User not found for email: ${email}`);
     return res.status(404).send({ error: "User not found" });
   }
 
-  if (!verificationCode || user.verificationCode !== verificationCode) {
+  if (!code || user.verificationCode !== code) {
+    console.error("Invalid verification code", user.verificationCode, code);
     return res.status(401).send({ error: "Invalid verification code" });
   }
 

@@ -14,19 +14,22 @@ type ResetInitialPasswordPayload = {
 };
 
 export async function resetInitialPassword(
-  req: FastifyRequest<{ Body: ResetInitialPasswordPayload }>,
+  req: FastifyRequest<{ Body: string }>,
   res: FastifyReply,
   fastify: FastifyInstance
 ) {
-  const { password, initialPassword, email } = req.body;
+  const { password, initialPassword, email } = JSON.parse(
+    req.body
+  ) as ResetInitialPasswordPayload;
 
   const user = await getUserByEmail(email);
   if (!user) {
+    console.error(`User not found for email: ${email}`);
     return res.status(404).send({ error: "User not found" });
   }
 
   if (user.initialPassword !== initialPassword) {
-    console.log("Initial password is incorrect");
+    console.error("Initial password is incorrect");
     return res.status(401).send({ error: "Invalid credentials" });
   }
 

@@ -1,10 +1,10 @@
 import { fastify } from "./config/fastify";
 import { authRoutes } from "./routes/auth.route";
-import { userRoutes } from "./routes/user.route";
+import { dashboardRoutes } from "./routes/dashboard.route";
 import { webhookRoutes } from "./routes/webhook.route";
 
 fastify.register(authRoutes);
-fastify.register(userRoutes);
+fastify.register(dashboardRoutes);
 
 fastify.register(webhookRoutes);
 
