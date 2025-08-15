@@ -11,10 +11,10 @@ type ResetPasswordRequestPayload = {
 };
 
 export async function resetPasswordRequest(
-  req: FastifyRequest<{ Body: string }>,
+  req: FastifyRequest<{ Body: ResetPasswordRequestPayload }>,
   res: FastifyReply
 ) {
-  const { email } = JSON.parse(req.body) as ResetPasswordRequestPayload;
+  const { email } = req.body;
 
   const user = await getUserByEmail(email);
   if (!user) {

@@ -9,11 +9,11 @@ type SignInPayload = {
 };
 
 export async function signIn(
-  req: FastifyRequest<{ Body: string }>,
+  req: FastifyRequest<{ Body: SignInPayload }>,
   res: FastifyReply,
   fastify: FastifyInstance
 ) {
-  const { password, email } = JSON.parse(req.body) as SignInPayload;
+  const { password, email } = req.body;
 
   if (!email || !password) {
     console.error("Email and password are required");

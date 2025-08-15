@@ -8,11 +8,10 @@ type VerifyCodePayload = {
 };
 
 export async function verifyCode(
-  req: FastifyRequest<{ Body: string }>,
+  req: FastifyRequest<{ Body: VerifyCodePayload }>,
   res: FastifyReply
 ) {
-  const { email, code } = JSON.parse(req.body) as VerifyCodePayload;
-
+  const { email, code } = req.body;
   const user = await getUserByEmail(email);
   if (!user) {
     console.error(`User not found for email: ${email}`);

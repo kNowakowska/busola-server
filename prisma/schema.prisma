@@ -29,7 +29,7 @@ model Answer {
   isCorrect  Boolean
   question   Question? @relation(fields: [questionId], references: [uuid])
   questionId String?   @db.Uuid
-  cmsId      String @unique
+  cmsId      String    @unique
 }
 
 enum QuestionType {
@@ -46,7 +46,7 @@ model Question {
   type      QuestionType @default(SINGLE)
   quiz      Quiz?        @relation(fields: [quizId], references: [uuid])
   quizId    String?      @db.Uuid
-  cmsId     String @unique
+  cmsId     String       @unique
 }
 
 model Quiz {
@@ -56,7 +56,7 @@ model Quiz {
   questions Question[]
   lesson    Lesson?    @relation(fields: [lessonId], references: [uuid])
   lessonId  String?    @db.Uuid
-  cmsId     String @unique
+  cmsId     String     @unique
 }
 
 model Lesson {
@@ -70,16 +70,19 @@ model Lesson {
   isLastLesson Boolean  @default(false)
   course       Course?  @relation(fields: [courseId], references: [uuid])
   courseId     String?  @db.Uuid
-  cmsId        String @unique
+  cmsId        String   @unique
 }
 
 model Course {
-  uuid      String         @id @unique @default(dbgenerated("gen_random_uuid()")) @db.Uuid
-  createdAt DateTime       @default(now()) @db.Timestamptz(6)
-  name      String
-  lessons   Lesson[]
-  users     UserToCourse[]
-  cmsId     String @unique
+  uuid             String         @id @unique @default(dbgenerated("gen_random_uuid()")) @db.Uuid
+  createdAt        DateTime       @default(now()) @db.Timestamptz(6)
+  name             String
+  shortDescription String @default("")
+  description      String @default("")
+  imageCMSId       String @default("")
+  lessons          Lesson[]
+  users            UserToCourse[]
+  cmsId            String         @unique
 }
 
 model UserToCourse {

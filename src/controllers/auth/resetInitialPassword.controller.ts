@@ -14,13 +14,11 @@ type ResetInitialPasswordPayload = {
 };
 
 export async function resetInitialPassword(
-  req: FastifyRequest<{ Body: string }>,
+  req: FastifyRequest<{ Body: ResetInitialPasswordPayload }>,
   res: FastifyReply,
   fastify: FastifyInstance
 ) {
-  const { password, initialPassword, email } = JSON.parse(
-    req.body
-  ) as ResetInitialPasswordPayload;
+  const { password, initialPassword, email } = req.body;
 
   const user = await getUserByEmail(email);
   if (!user) {

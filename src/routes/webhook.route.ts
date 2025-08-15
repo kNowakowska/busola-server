@@ -42,10 +42,12 @@ export async function webhookRoutes(fastify: FastifyInstance) {
           {
             // create or update course in DB
             const course = (payload as CourseEntryEvent).fields;
-            const createdCourse = await upsertCourse(
-              payload.sys.id,
-              course.name["en-US"]
-            );
+            const createdCourse = await upsertCourse(payload.sys.id, {
+              name: course.name["en-US"],
+              shortDescription: course.shortDescription["en-US"],
+              description: course.description["en-US"],
+              imageCMSId: course.image["en-US"].sys.id,
+            });
 
             // update lessons assigned to the course in DB
             const lessonsIds = course.lessons["en-US"].map(

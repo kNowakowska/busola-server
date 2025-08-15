@@ -26,7 +26,12 @@ export async function currentUser(
       return res.status(401).send({ error: "Unauthorized" });
     }
 
-    return res.status(200).send({ user });
+    return res.status(200).send({
+      ...user,
+      courses: user.courses.map((course) => ({
+        ...course.course,
+      })),
+    });
   } catch (error) {
     console.error(error);
     return res.status(401).send({ error: "Unauthorized" });

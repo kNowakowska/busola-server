@@ -14,12 +14,10 @@ type ResetPasswordPayload = {
 };
 
 export async function resetPassword(
-  req: FastifyRequest<{ Body: string }>,
+  req: FastifyRequest<{ Body: ResetPasswordPayload }>,
   res: FastifyReply
 ) {
-  const { email, code, password } = JSON.parse(
-    req.body
-  ) as ResetPasswordPayload;
+  const { email, code, password } = req.body;
 
   const user = await getUserByEmail(email);
   if (!user) {

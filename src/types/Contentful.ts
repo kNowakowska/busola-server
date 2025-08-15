@@ -37,6 +37,9 @@ export interface ContentfulEntryEvent<
 export type CourseFields = {
   name: LocalizedValue<string>;
   lessons: LocalizedValue<ContentfulLink<"Entry">[]>;
+  shortDescription: LocalizedValue<string>;
+  description: LocalizedValue<string>;
+  image: LocalizedValue<ContentfulLink<"Asset">>;
 };
 
 export type LessonFields = {
