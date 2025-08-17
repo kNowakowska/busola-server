@@ -3,16 +3,16 @@ import { z } from "zod";
 export const password = () =>
   z
     .string()
-    .min(8, "Hasło musi mieć co najmniej 8 znaków")
+    .min(8, "Password must be at least 8 characters")
     .refine(
       (val) => /[A-Z]/.test(val),
-      "Hasło musi zawierać co najmniej jedną wielką literę"
+      "Password must contain at least one uppercase letter"
     )
     .refine(
       (val) => /[0-9]/.test(val),
-      "Hasło musi zawierać co najmniej jedną cyfrę"
+      "Password must contain at least one number"
     )
     .refine(
       (val) => /[!@#$%^&*]/.test(val),
-      "Hasło musi zawierać co najmniej jeden znak specjalny"
+      "Password must contain at least one special character"
     );

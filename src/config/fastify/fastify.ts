@@ -4,6 +4,8 @@ import fastifyCookie from "@fastify/cookie";
 import fastifyJWT from "@fastify/jwt";
 import cors from "@fastify/cors";
 
+import { swaggerConfig } from "./swagger";
+
 const fastify = Fastify({ logger: true });
 
 fastify.register(fastifyCookie, {
@@ -26,5 +28,7 @@ fastify.register(cors, {
   credentials: true,
   maxAge: 24 * 60 * 60 * 1000, // 24 hours
 });
+
+swaggerConfig(fastify);
 
 export { fastify };

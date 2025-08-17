@@ -1,4 +1,5 @@
-import { fastify } from "./config/fastify";
+import { fastify } from "./config/fastify/fastify";
+
 import { authRoutes } from "./routes/auth.route";
 import { dashboardRoutes } from "./routes/dashboard.route";
 import { webhookRoutes } from "./routes/webhook.route";
