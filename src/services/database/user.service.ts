@@ -42,7 +42,6 @@ export async function getUserWithCoursesByUserId(userId: string) {
             select: {
               uuid: true,
               name: true,
-              description: true,
               shortDescription: true,
               imageCMSId: true,
             },

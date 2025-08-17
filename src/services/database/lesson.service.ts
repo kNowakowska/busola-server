@@ -1,33 +1,12 @@
 import { prisma } from "../../config/prisma";
 
-type LessonCreateInput = {
-  name: string;
-  content: any;
-  videoUrl?: string;
-  order: number;
-  cmsId: string;
-};
-
-export async function createLesson(lesson: LessonCreateInput) {
-  console.log("Creating lesson:", lesson.name);
-  return prisma.lesson.create({
-    data: { ...lesson },
-  });
-}
+import { ForbiddenError } from "../../errors/ForbiddenError";
+import { NotFoundError } from "../../errors/NotFoundError";
+import { InvalidPayloadError } from "../../errors/InvalidPayloadError";
 
 export async function getLessonByCmsId(cmsId: string) {
   return prisma.lesson.findUnique({
     where: { cmsId },
-  });
-}
-
-export async function updateLesson(
-  lessonId: string,
-  lesson: LessonCreateInput
-) {
-  return prisma.lesson.update({
-    where: { uuid: lessonId },
-    data: { ...lesson },
   });
 }
 
@@ -50,4 +29,50 @@ export async function upsertLesson(
     update: { name, content, videoUrl, order },
     create: { name, content, videoUrl, order, cmsId },
   });
+}
+
+export async function getLessonById(
+  lessonId: string,
+  courseId: string,
+  userId: string
+) {
+  console.log(
+    `Fetching lesson by id: ${lessonId} for course: ${courseId} and user: ${userId}`
+  );
+  const lesson = await prisma.lesson.findUnique({
+    where: {
+      uuid: courseId,
+    },
+    select: {
+      uuid: true,
+      name: true,
+      order: true,
+      courseId: true,
+      course: {
+        select: {
+          _count: {
+            select: {
+              users: {
+                where: {
+                  userId,
+                },
+              },
+            },
+          },
+        },
+      },
+    },
+  });
+
+  if (!lesson) throw new NotFoundError(`Lesson with id: ${lessonId} not found`);
+
+  if (lesson.courseId !== courseId)
+    throw new InvalidPayloadError("User doesn't have access to this lesson");
+
+  const isRelatedToUser = (lesson.course?._count.users ?? 0) > 0;
+
+  if (!isRelatedToUser)
+    throw new ForbiddenError("User doesn't have access to this course");
+
+  return lesson;
 }
