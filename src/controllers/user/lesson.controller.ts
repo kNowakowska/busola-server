@@ -6,7 +6,7 @@ import { ForbiddenError } from "../../errors/ForbiddenError";
 import { UserTokenPayload } from "../../types/UserTokenPayload";
 import { getLessonById } from "../../services/database/lesson.service";
 
-export async function lesson(
+export async function getLesson(
   req: FastifyRequest,
   res: FastifyReply,
   fastify: FastifyInstance

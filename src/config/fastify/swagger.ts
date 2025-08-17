@@ -98,8 +98,10 @@ export function swaggerConfig(fastify: FastifyInstance) {
             properties: {
               uuid: { type: "string" },
               name: { type: "string" },
+              isCompleted: { type: "boolean" },
+              courseId: { type: "string" },
             },
-            required: ["uuid", "name"],
+            required: ["uuid", "name", "isCompleted", "courseId"],
           },
           CourseListItem: {
             type: "object",
@@ -280,8 +282,10 @@ export function swaggerConfig(fastify: FastifyInstance) {
     properties: {
       uuid: { type: "string" },
       name: { type: "string" },
+      isCompleted: { type: "boolean" },
+      courseId: { type: "string" },
     },
-    required: ["uuid", "name"],
+    required: ["uuid", "name", "isCompleted", "courseId"],
   });
 
   fastify.addSchema({
@@ -335,7 +339,7 @@ export function swaggerConfig(fastify: FastifyInstance) {
       name: { type: "string" },
       lastName: { type: "string" },
       email: { type: "string", format: "email" },
-      courses: { type: "array", items: { $ref: "Course#" } },
+      courses: { type: "array", items: { $ref: "CourseListItem#" } },
     },
     required: ["uuid", "name", "lastName", "email", "courses"],
   });

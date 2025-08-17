@@ -3,7 +3,7 @@ import { FastifyInstance, FastifyReply, FastifyRequest } from "fastify";
 import { getUserWithCoursesByUserId } from "../../services/database/user.service";
 import { UserTokenPayload } from "../../types/UserTokenPayload";
 
-export async function currentUser(
+export async function getCurrentUser(
   req: FastifyRequest,
   res: FastifyReply,
   fastify: FastifyInstance

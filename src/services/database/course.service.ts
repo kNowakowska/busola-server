@@ -40,6 +40,7 @@ export async function getCourseWithLessonsById(
         select: {
           uuid: true,
           name: true,
+          courseId: true,
         },
       },
       _count: {

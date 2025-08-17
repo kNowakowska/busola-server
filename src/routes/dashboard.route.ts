@@ -1,7 +1,10 @@
 import { FastifyInstance } from "fastify";
 
-import { currentUser } from "../controllers/user/currentUser.controller";
 import { handlerWrapper } from "../utils/handlerWrapper";
+
+import { getCurrentUser } from "../controllers/user/currentUser.controller";
+import { getCourse } from "../controllers/user/course.controller";
+import { getLesson } from "../controllers/user/lesson.controller";
 
 export async function dashboardRoutes(fastify: FastifyInstance) {
   fastify.get(
@@ -23,11 +26,11 @@ export async function dashboardRoutes(fastify: FastifyInstance) {
         },
       },
     },
-    handlerWrapper((req, res) => currentUser(req, res, fastify))
+    handlerWrapper((req, res) => getCurrentUser(req, res, fastify))
   );
 
   fastify.get(
-    "/dashboard/courses/:courseId",
+    "/dashboard/course/:courseId",
     {
       schema: {
         tags: ["Dashboard"],
@@ -70,14 +73,11 @@ export async function dashboardRoutes(fastify: FastifyInstance) {
         },
       },
     },
-    (_req, res) => {
-      // TODO: Implement course by id
-      return res.status(200);
-    }
+    handlerWrapper((req, res) => getCourse(req, res, fastify))
   );
 
   fastify.get(
-    "/dashboard/courses/:courseId/lessons/:lessonId",
+    "/dashboard/course/:courseId/lesson/:lessonId",
     {
       schema: {
         tags: ["Dashboard"],
@@ -121,9 +121,6 @@ export async function dashboardRoutes(fastify: FastifyInstance) {
         },
       },
     },
-    (_req, res) => {
-      // TODO: Implement lesson by id
-      return res.status(200);
-    }
+    handlerWrapper((req, res) => getLesson(req, res, fastify))
   );
 }

@@ -6,7 +6,7 @@ import { ForbiddenError } from "../../errors/ForbiddenError";
 import { UserTokenPayload } from "../../types/UserTokenPayload";
 import { getCourseWithLessonsById } from "../../services/database/course.service";
 
-export async function course(
+export async function getCourse(
   req: FastifyRequest,
   res: FastifyReply,
   fastify: FastifyInstance
@@ -52,5 +52,12 @@ export async function course(
     return res.status(500).send({ error: "Internal server error" });
   }
 
-  return res.status(200).send(course);
+  return res.status(200).send({
+    ...course,
+    lessons: course.lessons.map((lesson) => ({
+      ...lesson,
+      // TODO: Implement lesson completion
+      isCompleted: false,
+    })),
+  });
 }
