@@ -4,7 +4,11 @@ import { NotFoundError } from "../../errors/NotFoundError";
 import { ForbiddenError } from "../../errors/ForbiddenError";
 
 import { UserTokenPayload } from "../../types/UserTokenPayload";
-import { getLessonById } from "../../services/database/lesson.service";
+import {
+  getLessonById,
+  getNextLessonId,
+  getPreviousLessonId,
+} from "../../services/database/lesson.service";
 
 export async function getLesson(
   req: FastifyRequest,
@@ -36,12 +40,14 @@ export async function getLesson(
     return res.status(401).send({ error: "Unauthorized" });
   }
 
-  let lesson;
+  let lesson, previousLessonId, nextLessonId;
   try {
     lesson = await getLessonById(lessonId, courseId, decoded.userId);
     if (!lesson) {
       throw new NotFoundError(`Lesson with id: ${lessonId} not found`);
     }
+    previousLessonId = await getPreviousLessonId(lesson);
+    nextLessonId = await getNextLessonId(lesson);
   } catch (error) {
     console.error(error);
     if (error instanceof NotFoundError) {
@@ -55,5 +61,7 @@ export async function getLesson(
     return res.status(500).send({ error: "Internal server error" });
   }
 
-  return res.status(200).send({ ...lesson, isCompleted: false });
+  return res
+    .status(200)
+    .send({ ...lesson, previousLessonId, nextLessonId, isCompleted: false });
 }

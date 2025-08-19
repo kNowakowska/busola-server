@@ -1,5 +1,7 @@
 import { prisma } from "../../config/prisma";
 
+import { Lesson } from "../../generated/prisma";
+
 import { ForbiddenError } from "../../errors/ForbiddenError";
 import { NotFoundError } from "../../errors/NotFoundError";
 import { InvalidPayloadError } from "../../errors/InvalidPayloadError";
@@ -77,4 +79,30 @@ export async function getLessonById(
     throw new ForbiddenError("User doesn't have access to this course");
 
   return lesson;
+}
+
+export async function getPreviousLessonId(
+  lesson: Partial<Lesson> & Required<Pick<Lesson, "order" | "courseId">>
+) {
+  if (lesson.order === 1) return null;
+
+  const previousLesson = await prisma.lesson.findFirst({
+    where: {
+      courseId: lesson.courseId,
+      order: lesson.order - 1,
+    },
+  });
+  return previousLesson?.uuid;
+}
+
+export async function getNextLessonId(
+  lesson: Partial<Lesson> & Required<Pick<Lesson, "order" | "courseId">>
+) {
+  const nextLesson = await prisma.lesson.findFirst({
+    where: {
+      courseId: lesson.courseId,
+      order: lesson.order + 1,
+    },
+  });
+  return nextLesson?.uuid;
 }
