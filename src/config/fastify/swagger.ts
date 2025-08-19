@@ -154,8 +154,22 @@ export function swaggerConfig(fastify: FastifyInstance) {
             properties: {
               uuid: { type: "string" },
               name: { type: "string" },
+              content: { type: "object", additionalProperties: true },
+              videoUrl: { type: "string" },
+              // quiz: { type: "array", items: { $ref: "#/components/schemas/Quiz" } },
+              order: { type: "number" },
+              courseId: { type: "string" },
+              isCompleted: { type: "boolean" },
             },
-            required: ["uuid", "name"],
+            required: [
+              "uuid",
+              "name",
+              "content",
+              "videoUrl",
+              "order",
+              "courseId",
+              "isCompleted",
+            ],
           },
           ContentfulEntryEvent: {
             type: "object",
@@ -306,8 +320,22 @@ export function swaggerConfig(fastify: FastifyInstance) {
     properties: {
       uuid: { type: "string" },
       name: { type: "string" },
+      content: { type: "object", additionalProperties: true },
+      videoUrl: { type: "string" },
+      // quiz: { type: "array", items: { $ref: "#/components/schemas/Quiz" } },
+      order: { type: "number" },
+      courseId: { type: "string" },
+      isCompleted: { type: "boolean" },
     },
-    required: ["uuid", "name"],
+    required: [
+      "uuid",
+      "name",
+      "content",
+      "videoUrl",
+      "order",
+      "courseId",
+      "isCompleted",
+    ],
   });
 
   fastify.addSchema({

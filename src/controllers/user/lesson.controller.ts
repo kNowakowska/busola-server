@@ -55,5 +55,5 @@ export async function getLesson(
     return res.status(500).send({ error: "Internal server error" });
   }
 
-  return res.status(200).send(lesson);
+  return res.status(200).send({ ...lesson, isCompleted: false });
 }

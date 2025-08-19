@@ -41,13 +41,15 @@ export async function getLessonById(
   );
   const lesson = await prisma.lesson.findUnique({
     where: {
-      uuid: courseId,
+      uuid: lessonId,
     },
     select: {
       uuid: true,
       name: true,
       order: true,
       courseId: true,
+      content: true,
+      videoUrl: true,
       course: {
         select: {
           _count: {

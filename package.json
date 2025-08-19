@@ -8,7 +8,8 @@
     "prisma:pull": "bun prisma db pull",
     "prisma:migrate": "bun prisma migrate dev",
     "prisma:format": "bun prisma format",
-    "prisma:generate": "bun prisma generate"
+    "prisma:generate": "bun prisma generate",
+    "prisma:schema": "bun run prisma:format && bun run prisma:migrate && bun run prisma:generate"
   },
   "devDependencies": {
     "@types/bun": "latest"

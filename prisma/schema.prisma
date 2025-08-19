@@ -60,26 +60,25 @@ model Quiz {
 }
 
 model Lesson {
-  uuid         String   @id @unique @default(dbgenerated("gen_random_uuid()")) @db.Uuid
-  createdAt    DateTime @default(now()) @db.Timestamptz(6)
-  name         String
-  content      Json
-  videoUrl     String?
-  quiz         Quiz[]
-  order        Int
-  isLastLesson Boolean  @default(false)
-  course       Course?  @relation(fields: [courseId], references: [uuid])
-  courseId     String?  @db.Uuid
-  cmsId        String   @unique
+  uuid      String   @id @unique @default(dbgenerated("gen_random_uuid()")) @db.Uuid
+  createdAt DateTime @default(now()) @db.Timestamptz(6)
+  name      String
+  content   Json
+  videoUrl  String?
+  quiz      Quiz[]
+  order     Int
+  course    Course?  @relation(fields: [courseId], references: [uuid])
+  courseId  String?  @db.Uuid
+  cmsId     String   @unique
 }
 
 model Course {
   uuid             String         @id @unique @default(dbgenerated("gen_random_uuid()")) @db.Uuid
   createdAt        DateTime       @default(now()) @db.Timestamptz(6)
   name             String
-  shortDescription String @default("")
-  description      String @default("")
-  imageCMSId       String @default("")
+  shortDescription String         @default("")
+  description      String         @default("")
+  imageCMSId       String         @default("")
   lessons          Lesson[]
   users            UserToCourse[]
   cmsId            String         @unique
