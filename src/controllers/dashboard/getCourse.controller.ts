@@ -1,3 +1,4 @@
+import { omit } from "lodash";
 import { FastifyInstance, FastifyReply, FastifyRequest } from "fastify";
 
 import { NotFoundError } from "../../errors/NotFoundError";
@@ -55,9 +56,8 @@ export async function getCourse(
   return res.status(200).send({
     ...course,
     lessons: course.lessons.map((lesson) => ({
-      ...lesson,
-      // TODO: Implement lesson completion
-      isCompleted: false,
+      ...omit(lesson, "users"),
+      isCompleted: lesson.users[0]?.isCompleted || false,
     })),
   });
 }

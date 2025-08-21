@@ -20,6 +20,7 @@ model User {
   initialPassword   String?
   verificationCode  String?
   courses           UserToCourse[]
+  lessons           UserToLesson[]
 }
 
 model Answer {
@@ -60,16 +61,17 @@ model Quiz {
 }
 
 model Lesson {
-  uuid      String   @id @unique @default(dbgenerated("gen_random_uuid()")) @db.Uuid
-  createdAt DateTime @default(now()) @db.Timestamptz(6)
+  uuid      String         @id @unique @default(dbgenerated("gen_random_uuid()")) @db.Uuid
+  createdAt DateTime       @default(now()) @db.Timestamptz(6)
   name      String
   content   Json
   videoUrl  String?
   quiz      Quiz[]
   order     Int
-  course    Course?  @relation(fields: [courseId], references: [uuid])
-  courseId  String?  @db.Uuid
-  cmsId     String   @unique
+  course    Course?        @relation(fields: [courseId], references: [uuid])
+  courseId  String?        @db.Uuid
+  cmsId     String         @unique
+  users     UserToLesson[]
 }
 
 model Course {
@@ -91,4 +93,19 @@ model UserToCourse {
   userId    String   @db.Uuid
   course    Course   @relation(fields: [courseId], references: [uuid])
   courseId  String   @db.Uuid
+
+  @@unique([userId, courseId])
+}
+
+model UserToLesson {
+  uuid        String   @id @unique @default(dbgenerated("gen_random_uuid()")) @db.Uuid
+  createdAt   DateTime @default(now()) @db.Timestamptz(6)
+  user        User     @relation(fields: [userId], references: [uuid])
+  userId      String   @db.Uuid
+  lesson      Lesson   @relation(fields: [lessonId], references: [uuid])
+  lessonId    String   @db.Uuid
+  notes       String?
+  isCompleted Boolean  @default(false)
+
+  @@unique([userId, lessonId])
 }

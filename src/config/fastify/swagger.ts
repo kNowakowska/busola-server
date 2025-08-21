@@ -162,6 +162,7 @@ export function swaggerConfig(fastify: FastifyInstance) {
               order: { type: "number" },
               courseId: { type: "string" },
               isCompleted: { type: "boolean" },
+              notes: { type: "string", nullable: true },
             },
             required: [
               "uuid",
@@ -172,6 +173,13 @@ export function swaggerConfig(fastify: FastifyInstance) {
               "courseId",
               "isCompleted",
             ],
+          },
+          SaveLessonNotesPayload: {
+            type: "object",
+            properties: {
+              notes: { type: "string" },
+            },
+            required: ["notes"],
           },
           ContentfulEntryEvent: {
             type: "object",
@@ -330,6 +338,7 @@ export function swaggerConfig(fastify: FastifyInstance) {
       order: { type: "number" },
       courseId: { type: "string" },
       isCompleted: { type: "boolean" },
+      notes: { type: "string", nullable: true },
     },
     required: [
       "uuid",
@@ -374,6 +383,15 @@ export function swaggerConfig(fastify: FastifyInstance) {
       courses: { type: "array", items: { $ref: "CourseListItem#" } },
     },
     required: ["uuid", "name", "lastName", "email", "courses"],
+  });
+
+  fastify.addSchema({
+    $id: "SaveLessonNotesPayload",
+    type: "object",
+    properties: {
+      notes: { type: "string" },
+    },
+    required: ["notes"],
   });
 
   fastify.addSchema({

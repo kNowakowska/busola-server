@@ -41,6 +41,14 @@ export async function getCourseWithLessonsById(
           uuid: true,
           name: true,
           courseId: true,
+          users: {
+            select: {
+              isCompleted: true,
+            },
+            where: {
+              userId,
+            },
+          },
         },
       },
       _count: {

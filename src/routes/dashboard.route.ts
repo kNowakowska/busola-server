@@ -2,9 +2,11 @@ import { FastifyInstance } from "fastify";
 
 import { handlerWrapper } from "../utils/handlerWrapper";
 
-import { getCurrentUser } from "../controllers/user/currentUser.controller";
-import { getCourse } from "../controllers/user/course.controller";
-import { getLesson } from "../controllers/user/lesson.controller";
+import { getCurrentUser } from "../controllers/dashboard/getCurrentUser.controller";
+import { getCourse } from "../controllers/dashboard/getCourse.controller";
+import { getLesson } from "../controllers/dashboard/getLesson.controller";
+import { saveNotes } from "../controllers/dashboard/saveNotes.controller";
+import { completeLesson } from "../controllers/dashboard/completeLesson.controller";
 
 export async function dashboardRoutes(fastify: FastifyInstance) {
   fastify.get(
@@ -122,5 +124,102 @@ export async function dashboardRoutes(fastify: FastifyInstance) {
       },
     },
     handlerWrapper((req, res) => getLesson(req, res, fastify))
+  );
+
+  fastify.post(
+    "/dashboard/course/:courseId/lesson/:lessonId/notes",
+    {
+      schema: {
+        tags: ["Dashboard"],
+        summary: "Save notes to lesson",
+        params: {
+          type: "object",
+          properties: {
+            courseId: { type: "string" },
+            lessonId: { type: "string" },
+          },
+          required: ["courseId", "lessonId"],
+        },
+        body: { $ref: "SaveLessonNotesPayload#" },
+        security: [{ cookieAuth: [] }],
+        response: {
+          200: { $ref: "Lesson#" },
+          400: {
+            allOf: [{ $ref: "ErrorResponse#" }],
+            example: {
+              error: "Invalid courseId or lessonId",
+            },
+          },
+          401: {
+            allOf: [{ $ref: "ErrorResponse#" }],
+            example: {
+              error: "Unauthorized",
+            },
+          },
+          403: {
+            allOf: [{ $ref: "ErrorResponse#" }],
+            example: {
+              error: "User doesn't have access to this course",
+            },
+          },
+          404: {
+            allOf: [{ $ref: "ErrorResponse#" }],
+            example: {
+              error: "Lesson not found",
+            },
+          },
+          500: { $ref: "ServerErrorResponse#" },
+        },
+      },
+    },
+    handlerWrapper((req, res) => saveNotes(req, res, fastify))
+  );
+
+  fastify.post(
+    "/dashboard/course/:courseId/lesson/:lessonId/complete",
+    {
+      schema: {
+        tags: ["Dashboard"],
+        summary: "Mark lesson as completed",
+        params: {
+          type: "object",
+          properties: {
+            courseId: { type: "string" },
+            lessonId: { type: "string" },
+          },
+          required: ["courseId", "lessonId"],
+        },
+        security: [{ cookieAuth: [] }],
+        response: {
+          200: { $ref: "Lesson#" },
+          400: {
+            allOf: [{ $ref: "ErrorResponse#" }],
+            example: {
+              error: "Invalid courseId or lessonId",
+            },
+          },
+          401: {
+            allOf: [{ $ref: "ErrorResponse#" }],
+            example: {
+              error: "Unauthorized",
+            },
+          },
+          403: {
+            allOf: [{ $ref: "ErrorResponse#" }],
+            example: {
+              error: "User doesn't have access to this course",
+            },
+          },
+          404: {
+            allOf: [{ $ref: "ErrorResponse#" }],
+            example: {
+              error: "Lesson not found",
+            },
+          },
+          500: { $ref: "ServerErrorResponse#" },
+        },
+      },
+    },
+    handlerWrapper((req, res) => completeLesson(req, res, fastify))
   );
 }

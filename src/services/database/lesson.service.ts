@@ -65,6 +65,15 @@ export async function getLessonById(
           },
         },
       },
+      users: {
+        select: {
+          notes: true,
+          isCompleted: true,
+        },
+        where: {
+          userId,
+        },
+      },
     },
   });
 
@@ -105,4 +114,62 @@ export async function getNextLessonId(
     },
   });
   return nextLesson?.uuid;
+}
+
+export async function saveNotesTolesson(
+  lesson: Lesson,
+  userId: string,
+  notes: string
+) {
+  return prisma.userToLesson.upsert({
+    where: {
+      userId_lessonId: {
+        userId,
+        lessonId: lesson.uuid,
+      },
+    },
+    update: { notes },
+    create: { userId, lessonId: lesson.uuid, notes },
+    select: {
+      isCompleted: true,
+      notes: true,
+      lesson: {
+        select: {
+          uuid: true,
+          name: true,
+          order: true,
+          courseId: true,
+          content: true,
+          videoUrl: true,
+        },
+      },
+    },
+  });
+}
+
+export async function markLessonAsCompleted(lesson: Lesson, userId: string) {
+  return prisma.userToLesson.upsert({
+    where: {
+      userId_lessonId: {
+        userId,
+        lessonId: lesson.uuid,
+      },
+    },
+    update: { isCompleted: true },
+    create: { userId, lessonId: lesson.uuid, isCompleted: true },
+    select: {
+      isCompleted: true,
+      notes: true,
+      lesson: {
+        select: {
+          uuid: true,
+          name: true,
+          order: true,
+          courseId: true,
+          content: true,
+          videoUrl: true,
+        },
+      },
+    },
+  });
 }

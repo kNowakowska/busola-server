@@ -1,4 +1,5 @@
 import { FastifyInstance, FastifyReply, FastifyRequest } from "fastify";
+import { omit } from "lodash";
 
 import { NotFoundError } from "../../errors/NotFoundError";
 import { ForbiddenError } from "../../errors/ForbiddenError";
@@ -6,11 +7,11 @@ import { ForbiddenError } from "../../errors/ForbiddenError";
 import { UserTokenPayload } from "../../types/UserTokenPayload";
 import {
   getLessonById,
-  getNextLessonId,
-  getPreviousLessonId,
+  markLessonAsCompleted,
 } from "../../services/database/lesson.service";
+import { Lesson } from "../../generated/prisma";
 
-export async function getLesson(
+export async function completeLesson(
   req: FastifyRequest,
   res: FastifyReply,
   fastify: FastifyInstance
@@ -40,14 +41,17 @@ export async function getLesson(
     return res.status(401).send({ error: "Unauthorized" });
   }
 
-  let lesson, previousLessonId, nextLessonId;
+  let lesson, userToLesson;
+
   try {
     lesson = await getLessonById(lessonId, courseId, decoded.userId);
     if (!lesson) {
       throw new NotFoundError(`Lesson with id: ${lessonId} not found`);
     }
-    previousLessonId = await getPreviousLessonId(lesson);
-    nextLessonId = await getNextLessonId(lesson);
+    userToLesson = await markLessonAsCompleted(
+      lesson as unknown as Lesson,
+      decoded.userId
+    );
   } catch (error) {
     console.error(error);
     if (error instanceof NotFoundError) {
@@ -61,7 +65,8 @@ export async function getLesson(
     return res.status(500).send({ error: "Internal server error" });
   }
 
-  return res
-    .status(200)
-    .send({ ...lesson, previousLessonId, nextLessonId, isCompleted: false });
+  return res.status(200).send({
+    ...omit(userToLesson, "lesson"),
+    ...userToLesson.lesson,
+  });
 }
