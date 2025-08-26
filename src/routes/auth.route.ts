@@ -112,7 +112,7 @@ export async function authRoutes(fastify: FastifyInstance) {
         },
       },
     },
-    handlerWrapper(refreshToken)
+    handlerWrapper((req, res) => refreshToken(req, res, fastify))
   );
 
   fastify.post(

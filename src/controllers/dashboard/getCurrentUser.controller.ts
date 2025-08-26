@@ -1,29 +1,15 @@
-import { FastifyInstance, FastifyReply, FastifyRequest } from "fastify";
+import { FastifyReply, FastifyRequest } from "fastify";
 
 import { getUserWithCoursesByUserId } from "../../services/database/user.service";
-import { UserTokenPayload } from "../../types/UserTokenPayload";
 
-export async function getCurrentUser(
-  req: FastifyRequest,
-  res: FastifyReply,
-  fastify: FastifyInstance
-) {
+export async function getCurrentUser(req: FastifyRequest, res: FastifyReply) {
   try {
-    const token = req.cookies?.access_token;
-
-    if (!token) {
-      console.error("No token found");
-      return res.status(401).send({ error: "Unauthorized" });
-    }
-
-    const decoded = fastify.jwt.verify<UserTokenPayload>(token);
-    const user = await getUserWithCoursesByUserId(decoded.userId);
+    const { userId, email } = req.tokenPayload;
+    const user = await getUserWithCoursesByUserId(userId);
 
     if (!user) {
-      console.error(
-        `User not found for userId: ${decoded.userId} and email: ${decoded.email}`
-      );
-      return res.status(401).send({ error: "Unauthorized" });
+      console.error(`User not found for userId: ${userId} and email: ${email}`);
+      return res.status(404).send({ error: "User not found" });
     }
 
     return res.status(200).send({

@@ -1,17 +1,13 @@
 import { omit } from "lodash";
-import { FastifyInstance, FastifyReply, FastifyRequest } from "fastify";
+import { FastifyReply, FastifyRequest } from "fastify";
 
 import { NotFoundError } from "../../errors/NotFoundError";
 import { ForbiddenError } from "../../errors/ForbiddenError";
 
-import { UserTokenPayload } from "../../types/UserTokenPayload";
 import { getCourseWithLessonsById } from "../../services/database/course.service";
 
-export async function getCourse(
-  req: FastifyRequest,
-  res: FastifyReply,
-  fastify: FastifyInstance
-) {
+export async function getCourse(req: FastifyRequest, res: FastifyReply) {
+  const { userId } = req.tokenPayload;
   const { courseId } = req.params as { courseId: string };
 
   if (!courseId) {
@@ -19,24 +15,9 @@ export async function getCourse(
     return res.status(400).send({ error: "Invalid courseId" });
   }
 
-  const token = req.cookies?.access_token;
-  let decoded: UserTokenPayload;
-
-  if (!token) {
-    console.error("No token found");
-    return res.status(401).send({ error: "Unauthorized" });
-  }
-
-  try {
-    decoded = fastify.jwt.verify<UserTokenPayload>(token);
-  } catch (error) {
-    console.error(error);
-    return res.status(401).send({ error: "Unauthorized" });
-  }
-
   let course;
   try {
-    course = await getCourseWithLessonsById(courseId, decoded.userId);
+    course = await getCourseWithLessonsById(courseId, userId);
     if (!course) {
       throw new NotFoundError(`Course with id: ${courseId} not found`);
     }

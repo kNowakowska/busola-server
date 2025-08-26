@@ -28,7 +28,7 @@ export async function dashboardRoutes(fastify: FastifyInstance) {
         },
       },
     },
-    handlerWrapper((req, res) => getCurrentUser(req, res, fastify))
+    handlerWrapper(getCurrentUser)
   );
 
   fastify.get(
@@ -75,7 +75,7 @@ export async function dashboardRoutes(fastify: FastifyInstance) {
         },
       },
     },
-    handlerWrapper((req, res) => getCourse(req, res, fastify))
+    handlerWrapper(getCourse)
   );
 
   fastify.get(
@@ -123,7 +123,7 @@ export async function dashboardRoutes(fastify: FastifyInstance) {
         },
       },
     },
-    handlerWrapper((req, res) => getLesson(req, res, fastify))
+    handlerWrapper(getLesson)
   );
 
   fastify.post(
@@ -172,7 +172,7 @@ export async function dashboardRoutes(fastify: FastifyInstance) {
         },
       },
     },
-    handlerWrapper((req, res) => saveNotes(req, res, fastify))
+    handlerWrapper(saveNotes)
   );
 
   fastify.post(
@@ -220,6 +220,6 @@ export async function dashboardRoutes(fastify: FastifyInstance) {
         },
       },
     },
-    handlerWrapper((req, res) => completeLesson(req, res, fastify))
+    handlerWrapper(completeLesson)
   );
 }
