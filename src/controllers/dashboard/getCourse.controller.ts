@@ -12,7 +12,7 @@ export async function getCourse(req: FastifyRequest, res: FastifyReply) {
 
   if (!courseId) {
     console.error("Invalid courseId");
-    return res.status(400).send({ error: "Invalid courseId" });
+    return res.status(400).send({ error: "Nieprawidłowy identyfikator kursu" });
   }
 
   let course;
@@ -24,14 +24,16 @@ export async function getCourse(req: FastifyRequest, res: FastifyReply) {
   } catch (error) {
     console.error(error);
     if (error instanceof NotFoundError) {
-      return res.status(404).send({ error: "Course not found" });
+      return res.status(404).send({ error: "Kurs nie znaleziony" });
     }
     if (error instanceof ForbiddenError) {
       return res
         .status(403)
-        .send({ error: "User doesn't have access to this course" });
+        .send({ error: "Użytkownik nie ma dostępu do tego kursu" });
     }
-    return res.status(500).send({ error: "Internal server error" });
+    return res
+      .status(500)
+      .send({ error: "Coś poszło nie tak. Spróbuj ponownie później" });
   }
 
   const lessons = course.lessons.map((lesson) => ({

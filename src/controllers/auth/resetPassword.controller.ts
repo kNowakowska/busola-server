@@ -22,12 +22,12 @@ export async function resetPassword(
   const user = await getUserByEmail(email);
   if (!user) {
     console.error(`User not found for email: ${email}`);
-    return res.status(404).send({ error: "User not found" });
+    return res.status(404).send({ error: "Użytkownik nie odnaleziony" });
   }
 
   if (!code || user.verificationCode !== code) {
     console.error("Invalid verification code", user.verificationCode, code);
-    return res.status(401).send({ error: "Invalid verification code" });
+    return res.status(401).send({ error: "Nieprawidłowy kod weryfikacyjny" });
   }
 
   console.log("Validating new password", password);
@@ -41,5 +41,5 @@ export async function resetPassword(
   const hashedPassword = await hashPassword(password);
   await updateUserPassword(email, hashedPassword);
 
-  return res.status(200).send({ message: "Password reset successfully" });
+  return res.status(200).send({ message: "Hasło zostało zresetowane" });
 }

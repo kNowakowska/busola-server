@@ -23,12 +23,12 @@ export async function resetInitialPassword(
   const user = await getUserByEmail(email);
   if (!user) {
     console.error(`User not found for email: ${email}`);
-    return res.status(404).send({ error: "User not found" });
+    return res.status(404).send({ error: "Użytkownik nie odnaleziony" });
   }
 
   if (user.initialPassword !== initialPassword) {
     console.error("Initial password is incorrect");
-    return res.status(401).send({ error: "Invalid credentials" });
+    return res.status(401).send({ error: "Nieprawidłowe dane logowania" });
   }
 
   console.log("Validating new password", password);

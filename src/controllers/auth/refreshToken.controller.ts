@@ -8,7 +8,10 @@ export async function refreshToken(
 ) {
   const { refresh_token } = req.cookies;
   if (!refresh_token) {
-    return res.status(401).send({ error: "Refresh token not found" });
+    console.error("Refresh token not found");
+    return res
+      .status(401)
+      .send({ error: "Odświeżenie sesji nie powiodło się" });
   }
 
   const decodedRefreshToken = fastify.jwt.decode(
@@ -16,7 +19,9 @@ export async function refreshToken(
   ) as UserTokenPayload;
 
   if (!decodedRefreshToken) {
-    return res.status(401).send({ error: "Invalid refresh token" });
+    return res
+      .status(401)
+      .send({ error: "Odświeżenie sesji nie powiodło się" });
   }
 
   console.log("Token verification for user:", decodedRefreshToken);
@@ -31,5 +36,5 @@ export async function refreshToken(
       maxAge: 60 * 60, // 1 hour
     })
     .status(200)
-    .send({ message: "Token refreshed" });
+    .send({ message: "Token odświeżony" });
 }

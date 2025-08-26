@@ -17,18 +17,18 @@ export async function signIn(
 
   if (!email || !password) {
     console.error("Email and password are required");
-    return res.status(400).send({ error: "Email and password are required" });
+    return res.status(400).send({ error: "Email i hasło są wymagane" });
   }
 
   const user = await getUserByEmail(email);
   if (!user) {
     console.error("User not found");
-    return res.status(404).send({ error: "User not found" });
+    return res.status(404).send({ error: "Użytkownik nie odnaleziony" });
   }
 
   if (!user.isPasswordReseted && !user.password) {
     console.error("User is not password reseted and does not have password");
-    return res.status(401).send({ error: "Invalid credentials" });
+    return res.status(401).send({ error: "Nieprawidłowe dane logowania" });
   }
 
   if (user.isPasswordReseted && user.password) {
@@ -63,7 +63,7 @@ export async function signIn(
         .send({ shouldResetPassword: false });
     } else {
       console.error("Password is incorrect");
-      return res.status(401).send({ error: "Invalid credentials" });
+      return res.status(401).send({ error: "Nieprawidłowe dane logowania" });
     }
   } else {
     console.log("User is not password reseted or does not have password");
@@ -72,7 +72,7 @@ export async function signIn(
       return res.status(200).send({ shouldResetPassword: true });
     } else {
       console.error("Initial password is incorrect");
-      return res.status(401).send({ error: "Invalid credentials" });
+      return res.status(401).send({ error: "Nieprawidłowe dane logowania" });
     }
   }
 }

@@ -19,7 +19,9 @@ export async function completeLesson(req: FastifyRequest, res: FastifyReply) {
 
   if (!courseId || !lessonId) {
     console.error("Invalid courseId or lessonId");
-    return res.status(400).send({ error: "Invalid courseId or lessonId" });
+    return res
+      .status(400)
+      .send({ error: "Nieprawidłowy identyfikator kursu lub lekcji" });
   }
 
   let lesson, userToLesson;
@@ -36,14 +38,16 @@ export async function completeLesson(req: FastifyRequest, res: FastifyReply) {
   } catch (error) {
     console.error(error);
     if (error instanceof NotFoundError) {
-      return res.status(404).send({ error: "Lesson not found" });
+      return res.status(404).send({ error: "Lekcja nie znaleziona" });
     }
     if (error instanceof ForbiddenError) {
       return res
         .status(403)
-        .send({ error: "User doesn't have access to this lesson" });
+        .send({ error: "Użytkownik nie ma dostępu do tej lekcji" });
     }
-    return res.status(500).send({ error: "Internal server error" });
+    return res
+      .status(500)
+      .send({ error: "Coś poszło nie tak. Spróbuj ponownie później" });
   }
 
   return res.status(200).send({

@@ -48,7 +48,7 @@ fastify.addHook("onRequest", (req, res, done) => {
 
   if (!token) {
     console.error("No token found");
-    return res.status(401).send({ error: "Unauthorized" });
+    return res.status(401).send({ error: "Sesja wygasła" });
   }
 
   let decoded: UserTokenPayload;
@@ -56,7 +56,7 @@ fastify.addHook("onRequest", (req, res, done) => {
     decoded = fastify.jwt.verify<UserTokenPayload>(token);
   } catch (error) {
     console.error(error);
-    return res.status(401).send({ error: "Unauthorized" });
+    return res.status(401).send({ error: "Sesja wygasła" });
   }
 
   req.tokenPayload = decoded;

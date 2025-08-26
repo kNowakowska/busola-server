@@ -19,7 +19,7 @@ export async function resetPasswordRequest(
   const user = await getUserByEmail(email);
   if (!user) {
     console.error(`User not found for email: ${email}`);
-    return res.status(404).send({ error: "User not found" });
+    return res.status(404).send({ error: "Użytkownik nie istnieje" });
   }
 
   console.log("Generating verification code for user:", email);
@@ -34,5 +34,5 @@ export async function resetPasswordRequest(
     `Your verificationcode is <b>${code}</b>`
   );
 
-  return res.status(200).send({ message: "Verification code sent" });
+  return res.status(200).send({ message: "Kod weryfikacyjny wysłany" });
 }

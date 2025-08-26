@@ -12,7 +12,9 @@ export function handlerWrapper(
       return await callback(req, res, ...args);
     } catch (error) {
       console.error(error);
-      return res.status(500).send({ error: "Internal server error" });
+      return res
+        .status(500)
+        .send({ error: "Coś poszło nie tak. Spróbuj ponownie później" });
     }
   };
 }
