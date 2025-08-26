@@ -53,11 +53,19 @@ export async function getCourse(
     return res.status(500).send({ error: "Internal server error" });
   }
 
+  const lessons = course.lessons.map((lesson) => ({
+    ...omit(lesson, "users"),
+    isCompleted: lesson.users[0]?.isCompleted || false,
+  }));
+
+  const lessonsCompleted = lessons.filter(
+    (lesson) => lesson.isCompleted
+  ).length;
+
   return res.status(200).send({
     ...course,
-    lessons: course.lessons.map((lesson) => ({
-      ...omit(lesson, "users"),
-      isCompleted: lesson.users[0]?.isCompleted || false,
-    })),
+    lessons,
+    lessonsCompleted,
+    lessonsCount: course.lessons.length,
   });
 }

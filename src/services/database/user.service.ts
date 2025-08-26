@@ -44,6 +44,18 @@ export async function getUserWithCoursesByUserId(userId: string) {
               name: true,
               shortDescription: true,
               imageCMSId: true,
+              lessons: {
+                select: {
+                  users: {
+                    select: {
+                      isCompleted: true,
+                    },
+                    where: {
+                      userId,
+                    },
+                  },
+                },
+              },
             },
           },
         },

@@ -28,8 +28,12 @@ export async function getCurrentUser(
 
     return res.status(200).send({
       ...user,
-      courses: user.courses.map((course) => ({
-        ...course.course,
+      courses: user.courses.map(({ course }) => ({
+        ...course,
+        lessonsCount: course.lessons.length,
+        lessonsCompleted: course.lessons.filter(
+          ({ users }) => users[0]?.isCompleted || false
+        ).length,
       })),
     });
   } catch (error) {

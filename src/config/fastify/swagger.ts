@@ -110,8 +110,17 @@ export function swaggerConfig(fastify: FastifyInstance) {
               name: { type: "string" },
               shortDescription: { type: "string" },
               imageCMSId: { type: "string" },
+              lessonsCompleted: { type: "number" },
+              lessonsCount: { type: "number" },
             },
-            required: ["uuid", "name", "shortDescription", "imageCMSId"],
+            required: [
+              "uuid",
+              "name",
+              "shortDescription",
+              "imageCMSId",
+              "lessonsCompleted",
+              "lessonsCount",
+            ],
           },
           User: {
             type: "object",
@@ -135,6 +144,8 @@ export function swaggerConfig(fastify: FastifyInstance) {
               description: { type: "string" },
               shortDescription: { type: "string" },
               imageCMSId: { type: "string" },
+              lessonsCompleted: { type: "number" },
+              lessonsCount: { type: "number" },
               lessons: {
                 type: "array",
                 items: { $ref: "#/components/schemas/LessonListItem" },
@@ -146,7 +157,9 @@ export function swaggerConfig(fastify: FastifyInstance) {
               "description",
               "shortDescription",
               "imageCMSId",
+              "lessonsCompleted",
               "lessons",
+              "lessonsCount",
             ],
           },
           Lesson: {
@@ -320,8 +333,19 @@ export function swaggerConfig(fastify: FastifyInstance) {
       name: { type: "string" },
       shortDescription: { type: "string" },
       imageCMSId: { type: "string" },
+      lessonsCompleted: { type: "number" },
+      lessonsCount: {
+        type: "number",
+      },
     },
-    required: ["uuid", "name", "shortDescription", "imageCMSId"],
+    required: [
+      "uuid",
+      "name",
+      "shortDescription",
+      "imageCMSId",
+      "lessonsCompleted",
+      "lessonsCount",
+    ],
   });
 
   fastify.addSchema({
@@ -360,6 +384,8 @@ export function swaggerConfig(fastify: FastifyInstance) {
       description: { type: "string" },
       shortDescription: { type: "string" },
       imageCMSId: { type: "string" },
+      lessonsCompleted: { type: "number" },
+      lessonsCount: { type: "number" },
       lessons: { type: "array", items: { $ref: "LessonListItem#" } },
     },
     required: [
@@ -368,6 +394,8 @@ export function swaggerConfig(fastify: FastifyInstance) {
       "description",
       "shortDescription",
       "imageCMSId",
+      "lessonsCompleted",
+      "lessonsCount",
       "lessons",
     ],
   });
