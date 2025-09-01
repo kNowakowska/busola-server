@@ -83,14 +83,17 @@ export async function webhookRoutes(fastify: FastifyInstance) {
                 payload.sys.id,
                 lesson.name["en-US"],
                 lesson.content["en-US"],
-                lesson.order["en-US"]
+                lesson.order["en-US"],
+                lesson.videoUrl["en-US"]
               );
 
               // update quizes assigned to the lesson in DB
 
-              const quiz = await getQuizByCmsId(lesson.quiz["en-US"].sys.id);
-              if (quiz) {
-                await updateQuizToLesson(quiz.uuid, createdLesson.uuid);
+              if (lesson?.quiz?.["en-US"]?.sys?.id) {
+                const quiz = await getQuizByCmsId(lesson.quiz["en-US"].sys.id);
+                if (quiz) {
+                  await updateQuizToLesson(quiz.uuid, createdLesson.uuid);
+                }
               }
             }
             break;

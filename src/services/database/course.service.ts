@@ -50,6 +50,9 @@ export async function getCourseWithLessonsById(
             },
           },
         },
+        orderBy: {
+          order: "asc",
+        },
       },
       _count: {
         select: {
