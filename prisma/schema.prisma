@@ -21,16 +21,18 @@ model User {
   verificationCode  String?
   courses           UserToCourse[]
   lessons           UserToLesson[]
+  QuizAttempt       QuizAttempt[]
 }
 
 model Answer {
-  uuid       String    @id @unique @default(dbgenerated("gen_random_uuid()")) @db.Uuid
-  createdAt  DateTime  @default(now()) @db.Timestamptz(6)
-  text       String
-  isCorrect  Boolean
-  question   Question? @relation(fields: [questionId], references: [uuid])
-  questionId String?   @db.Uuid
-  cmsId      String    @unique
+  uuid            String            @id @unique @default(dbgenerated("gen_random_uuid()")) @db.Uuid
+  createdAt       DateTime          @default(now()) @db.Timestamptz(6)
+  text            String
+  isCorrect       Boolean
+  question        Question?         @relation(fields: [questionId], references: [uuid])
+  questionId      String?           @db.Uuid
+  cmsId           String            @unique
+  AnswerSelection AnswerSelection[]
 }
 
 enum QuestionType {
@@ -40,24 +42,27 @@ enum QuestionType {
 }
 
 model Question {
-  uuid      String       @id @unique @default(dbgenerated("gen_random_uuid()")) @db.Uuid
-  createdAt DateTime     @default(now()) @db.Timestamptz(6)
-  text      String
-  options   Answer[]
-  type      QuestionType @default(SINGLE)
-  quiz      Quiz?        @relation(fields: [quizId], references: [uuid])
-  quizId    String?      @db.Uuid
-  cmsId     String       @unique
+  uuid             String             @id @unique @default(dbgenerated("gen_random_uuid()")) @db.Uuid
+  createdAt        DateTime           @default(now()) @db.Timestamptz(6)
+  text             String
+  options          Answer[]
+  type             QuestionType       @default(SINGLE)
+  quiz             Quiz?              @relation(fields: [quizId], references: [uuid])
+  quizId           String?            @db.Uuid
+  cmsId            String             @unique
+  QuestionResponse QuestionResponse[]
 }
 
 model Quiz {
-  uuid      String     @id @unique @default(dbgenerated("gen_random_uuid()")) @db.Uuid
-  createdAt DateTime   @default(now()) @db.Timestamptz(6)
-  name      String
-  questions Question[]
-  lesson    Lesson?    @relation(fields: [lessonId], references: [uuid])
-  lessonId  String?    @db.Uuid
-  cmsId     String     @unique
+  uuid                 String        @id @unique @default(dbgenerated("gen_random_uuid()")) @db.Uuid
+  createdAt            DateTime      @default(now()) @db.Timestamptz(6)
+  name                 String
+  questions            Question[]
+  lesson               Lesson?       @relation(fields: [lessonId], references: [uuid])
+  lessonId             String?       @db.Uuid
+  cmsId                String        @unique
+  attempts             QuizAttempt[]
+  questionsToDrawCount Int           @default(10)
 }
 
 model Lesson {
@@ -108,4 +113,41 @@ model UserToLesson {
   isCompleted Boolean  @default(false)
 
   @@unique([userId, lessonId])
+}
+
+model QuizAttempt {
+  uuid   String @id @unique @default(dbgenerated("gen_random_uuid()")) @db.Uuid
+  userId String @db.Uuid
+  user   User   @relation(fields: [userId], references: [uuid], onDelete: Cascade)
+  quizId String @db.Uuid
+  quiz   Quiz   @relation(fields: [quizId], references: [uuid], onDelete: Cascade)
+
+  score Int
+
+  responses QuestionResponse[]
+
+  @@index([userId, quizId])
+  @@index([quizId])
+}
+
+model QuestionResponse {
+  uuid       String            @id @unique @default(dbgenerated("gen_random_uuid()")) @db.Uuid
+  attemptId  String            @db.Uuid
+  attempt    QuizAttempt       @relation(fields: [attemptId], references: [uuid], onDelete: Cascade)
+  questionId String            @db.Uuid
+  question   Question          @relation(fields: [questionId], references: [uuid], onDelete: Restrict)
+  isCorrect  Boolean
+  selections AnswerSelection[]
+
+  @@unique([attemptId, questionId])
+  @@index([questionId])
+}
+
+model AnswerSelection {
+  answer     Answer           @relation(fields: [answerId], references: [uuid], onDelete: Restrict)
+  answerId   String           @db.Uuid
+  responseId String           @db.Uuid
+  response   QuestionResponse @relation(fields: [responseId], references: [uuid], onDelete: Cascade)
+
+  @@id([responseId, answerId])
 }

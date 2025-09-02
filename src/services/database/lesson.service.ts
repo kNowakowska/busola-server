@@ -52,6 +52,11 @@ export async function getLessonById(
       courseId: true,
       content: true,
       videoUrl: true,
+      quiz: {
+        select: {
+          uuid: true,
+        },
+      },
       course: {
         select: {
           _count: {

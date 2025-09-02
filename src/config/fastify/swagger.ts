@@ -28,6 +28,16 @@ export function swaggerConfig(fastify: FastifyInstance) {
             },
             required: ["error"],
           },
+          UnauthorizedErrorResponse: {
+            type: "object",
+            properties: {
+              error: { type: "string" },
+            },
+            required: ["error"],
+            example: {
+              error: "Sesja wygasła",
+            },
+          },
           ServerErrorResponse: {
             type: "object",
             properties: {
@@ -35,7 +45,7 @@ export function swaggerConfig(fastify: FastifyInstance) {
             },
             required: ["error"],
             example: {
-              error: "Internal server error",
+              error: "Coś poszło nie tak. Spróbuj ponownie później",
             },
           },
           MessageResponse: {
@@ -136,6 +146,32 @@ export function swaggerConfig(fastify: FastifyInstance) {
             },
             required: ["uuid", "name", "lastName", "email", "courses"],
           },
+          Answer: {
+            type: "object",
+            properties: {
+              uuid: { type: "string" },
+              text: { type: "string" },
+            },
+            required: ["uuid", "text"],
+          },
+          Question: {
+            type: "object",
+            properties: {
+              uuid: { type: "string" },
+              text: { type: "string" },
+              options: { type: "array", items: { $ref: "Answer#" } },
+            },
+            required: ["uuid", "text", "options"],
+          },
+          Quiz: {
+            type: "object",
+            properties: {
+              uuid: { type: "string" },
+              name: { type: "string" },
+              questions: { type: "array", items: { $ref: "Question#" } },
+            },
+            required: ["uuid", "name", "questions"],
+          },
           Course: {
             type: "object",
             properties: {
@@ -171,11 +207,11 @@ export function swaggerConfig(fastify: FastifyInstance) {
               videoUrl: { type: "string" },
               previousLessonId: { type: "string", nullable: true },
               nextLessonId: { type: "string", nullable: true },
-              // quiz: { type: "array", items: { $ref: "#/components/schemas/Quiz" } },
               order: { type: "number" },
               courseId: { type: "string" },
               isCompleted: { type: "boolean" },
               notes: { type: "string", nullable: true },
+              quizId: { type: "string", nullable: true },
             },
             required: [
               "uuid",
@@ -241,12 +277,22 @@ export function swaggerConfig(fastify: FastifyInstance) {
   });
 
   fastify.addSchema({
+    $id: "UnauthorizedErrorResponse",
+    type: "object",
+    properties: { error: { type: "string" } },
+    required: ["error"],
+    example: {
+      error: "Sesja wygasła",
+    },
+  });
+
+  fastify.addSchema({
     $id: "ServerErrorResponse",
     type: "object",
     properties: { error: { type: "string" } },
     required: ["error"],
     example: {
-      error: "Internal server error",
+      error: "Coś poszło nie tak. Spróbuj ponownie później",
     },
   });
 
@@ -349,6 +395,38 @@ export function swaggerConfig(fastify: FastifyInstance) {
   });
 
   fastify.addSchema({
+    $id: "Answer",
+    type: "object",
+    properties: {
+      uuid: { type: "string" },
+      text: { type: "string" },
+    },
+    required: ["uuid", "text"],
+  });
+
+  fastify.addSchema({
+    $id: "Question",
+    type: "object",
+    properties: {
+      uuid: { type: "string" },
+      text: { type: "string" },
+      options: { type: "array", items: { $ref: "Answer#" } },
+    },
+    required: ["uuid", "text", "options"],
+  });
+
+  fastify.addSchema({
+    $id: "Quiz",
+    type: "object",
+    properties: {
+      uuid: { type: "string" },
+      name: { type: "string" },
+      questions: { type: "array", items: { $ref: "Question#" } },
+    },
+    required: ["uuid", "name", "questions"],
+  });
+
+  fastify.addSchema({
     $id: "Lesson",
     type: "object",
     properties: {
@@ -358,11 +436,11 @@ export function swaggerConfig(fastify: FastifyInstance) {
       videoUrl: { type: "string" },
       previousLessonId: { type: "string", nullable: true },
       nextLessonId: { type: "string", nullable: true },
-      // quiz: { type: "array", items: { $ref: "#/components/schemas/Quiz" } },
       order: { type: "number" },
       courseId: { type: "string" },
       isCompleted: { type: "boolean" },
       notes: { type: "string", nullable: true },
+      quizId: { type: "string", nullable: true },
     },
     required: [
       "uuid",

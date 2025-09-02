@@ -7,6 +7,7 @@ import { getCourse } from "../controllers/dashboard/getCourse.controller";
 import { getLesson } from "../controllers/dashboard/getLesson.controller";
 import { saveNotes } from "../controllers/dashboard/saveNotes.controller";
 import { completeLesson } from "../controllers/dashboard/completeLesson.controller";
+import { getQuiz } from "../controllers/dashboard/getQuiz.controller";
 
 export async function dashboardRoutes(fastify: FastifyInstance) {
   fastify.get(
@@ -18,12 +19,7 @@ export async function dashboardRoutes(fastify: FastifyInstance) {
         security: [{ cookieAuth: [] }],
         response: {
           200: { $ref: "User#" },
-          401: {
-            allOf: [{ $ref: "ErrorResponse#" }],
-            example: {
-              error: "Unauthorized",
-            },
-          },
+          401: { $ref: "UnauthorizedErrorResponse#" },
           500: { $ref: "ServerErrorResponse#" },
         },
       },
@@ -53,12 +49,7 @@ export async function dashboardRoutes(fastify: FastifyInstance) {
               error: "Invalid courseId",
             },
           },
-          401: {
-            allOf: [{ $ref: "ErrorResponse#" }],
-            example: {
-              error: "Unauthorized",
-            },
-          },
+          401: { $ref: "UnauthorizedErrorResponse#" },
           403: {
             allOf: [{ $ref: "ErrorResponse#" }],
             example: {
@@ -101,12 +92,7 @@ export async function dashboardRoutes(fastify: FastifyInstance) {
               error: "Invalid courseId or lessonId",
             },
           },
-          401: {
-            allOf: [{ $ref: "ErrorResponse#" }],
-            example: {
-              error: "Unauthorized",
-            },
-          },
+          401: { $ref: "UnauthorizedErrorResponse#" },
           403: {
             allOf: [{ $ref: "ErrorResponse#" }],
             example: {
@@ -150,12 +136,7 @@ export async function dashboardRoutes(fastify: FastifyInstance) {
               error: "Invalid courseId or lessonId",
             },
           },
-          401: {
-            allOf: [{ $ref: "ErrorResponse#" }],
-            example: {
-              error: "Unauthorized",
-            },
-          },
+          401: { $ref: "UnauthorizedErrorResponse#" },
           403: {
             allOf: [{ $ref: "ErrorResponse#" }],
             example: {
@@ -198,12 +179,7 @@ export async function dashboardRoutes(fastify: FastifyInstance) {
               error: "Invalid courseId or lessonId",
             },
           },
-          401: {
-            allOf: [{ $ref: "ErrorResponse#" }],
-            example: {
-              error: "Unauthorized",
-            },
-          },
+          401: { $ref: "UnauthorizedErrorResponse#" },
           403: {
             allOf: [{ $ref: "ErrorResponse#" }],
             example: {
@@ -221,5 +197,49 @@ export async function dashboardRoutes(fastify: FastifyInstance) {
       },
     },
     handlerWrapper(completeLesson)
+  );
+
+  fastify.get(
+    "/dashboard/course/:courseId/lesson/:lessonId/quiz/:quizId",
+    {
+      schema: {
+        tags: ["Dashboard"],
+        summary: "Get quiz by id",
+        params: {
+          type: "object",
+          properties: {
+            courseId: { type: "string" },
+            lessonId: { type: "string" },
+            quizId: { type: "string" },
+          },
+          required: ["courseId", "lessonId", "quizId"],
+        },
+        security: [{ cookieAuth: [] }],
+        response: {
+          200: { $ref: "Quiz#" },
+          400: {
+            allOf: [{ $ref: "ErrorResponse#" }],
+            example: {
+              error: "Nieprawidłowy identyfikator quizu",
+            },
+          },
+          401: { $ref: "UnauthorizedErrorResponse#" },
+          403: {
+            allOf: [{ $ref: "ErrorResponse#" }],
+            example: {
+              error: "Użytkownik nie ma dostępu do tej lekcji quizu",
+            },
+          },
+          404: {
+            allOf: [{ $ref: "ErrorResponse#" }],
+            example: {
+              error: "Quiz nie znaleziony",
+            },
+          },
+          500: { $ref: "ServerErrorResponse#" },
+        },
+      },
+    },
+    handlerWrapper(getQuiz)
   );
 }

@@ -52,5 +52,6 @@ export async function getLesson(req: FastifyRequest, res: FastifyReply) {
     nextLessonId,
     isCompleted: lesson.users[0]?.isCompleted || false,
     notes: lesson.users[0]?.notes || "",
+    quizId: lesson.quiz[0]?.uuid || "",
   });
 }

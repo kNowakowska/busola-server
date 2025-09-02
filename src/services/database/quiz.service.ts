@@ -1,4 +1,6 @@
 import { prisma } from "../../config/prisma";
+import { NotFoundError } from "../../errors/NotFoundError";
+import getRandomElementsFromArray from "../../utils/getRandomElementsFromArray";
 
 export async function createQuiz(name: string, cmsId: string) {
   console.log("Creating quiz:", name);
@@ -33,4 +35,39 @@ export async function upsertQuiz(cmsId: string, name: string) {
     update: { name },
     create: { name, cmsId },
   });
+}
+
+export async function getQuizWithRandomQuestions(quizId: string) {
+  const quiz = await prisma.quiz.findUnique({
+    where: { uuid: quizId },
+    select: {
+      uuid: true,
+      name: true,
+      questionsToDrawCount: true,
+      questions: {
+        select: {
+          uuid: true,
+          text: true,
+          options: {
+            select: {
+              uuid: true,
+              text: true,
+            },
+          },
+        },
+      },
+    },
+  });
+  if (!quiz) throw new NotFoundError(`Quiz with id: ${quizId} not found`);
+
+  const questionsCount = quiz.questionsToDrawCount;
+  const allQuestionsCount = quiz.questions.length;
+
+  if (questionsCount >= allQuestionsCount) {
+    return quiz;
+  }
+
+  quiz.questions = getRandomElementsFromArray(quiz.questions, questionsCount);
+
+  return quiz;
 }
