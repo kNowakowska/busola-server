@@ -15,6 +15,35 @@ export async function getQuizByCmsId(cmsId: string) {
   });
 }
 
+export async function getQuizById(uuid: string) {
+  console.log("Fetching quiz by id:", uuid);
+  return prisma.quiz.findUnique({
+    where: { uuid },
+    select: {
+      uuid: true,
+      name: true,
+      questionsToDrawCount: true,
+      questions: {
+        select: {
+          uuid: true,
+          options: {
+            select: {
+              uuid: true,
+              isCorrect: true,
+            },
+          },
+        },
+      },
+      attempts: {
+        select: {
+          score: true,
+          createdAt: true,
+        },
+      },
+    },
+  });
+}
+
 export async function updateQuiz(quizId: string, name: string) {
   return prisma.quiz.update({
     where: { uuid: quizId },
@@ -54,6 +83,12 @@ export async function getQuizWithRandomQuestions(quizId: string) {
               text: true,
             },
           },
+        },
+      },
+      attempts: {
+        select: {
+          score: true,
+          createdAt: true,
         },
       },
     },

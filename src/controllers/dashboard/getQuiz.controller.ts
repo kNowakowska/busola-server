@@ -38,5 +38,13 @@ export async function getQuiz(req: FastifyRequest, res: FastifyReply) {
       .send({ error: "Coś poszło nie tak. Spróbuj ponownie później" });
   }
 
-  return res.status(200).send(quiz);
+  return res.status(200).send({
+    ...quiz,
+    attempts: quiz.attempts.map((attempt) => ({
+      ...attempt,
+      scoreInPercent: Math.round(
+        (attempt.score * 100) / quiz.questionsToDrawCount
+      ),
+    })),
+  });
 }

@@ -8,6 +8,7 @@ import { getLesson } from "../controllers/dashboard/getLesson.controller";
 import { saveNotes } from "../controllers/dashboard/saveNotes.controller";
 import { completeLesson } from "../controllers/dashboard/completeLesson.controller";
 import { getQuiz } from "../controllers/dashboard/getQuiz.controller";
+import { saveQuizAnswers } from "../controllers/dashboard/saveQuizAnswers.controller";
 
 export async function dashboardRoutes(fastify: FastifyInstance) {
   fastify.get(
@@ -241,5 +242,57 @@ export async function dashboardRoutes(fastify: FastifyInstance) {
       },
     },
     handlerWrapper(getQuiz)
+  );
+
+  fastify.post(
+    "/dashboard/course/:courseId/lesson/:lessonId/quiz/:quizId",
+    {
+      schema: {
+        tags: ["Dashboard"],
+        summary: "Send quiz answers",
+        params: {
+          type: "object",
+          properties: {
+            courseId: { type: "string" },
+            lessonId: { type: "string" },
+            quizId: { type: "string" },
+          },
+          required: ["courseId", "lessonId", "quizId"],
+        },
+        body: { $ref: "SaveQuizAnswersPayload#" },
+        security: [{ cookieAuth: [] }],
+        response: {
+          200: {
+            type: "object",
+            properties: {
+              scoreInPercent: { type: "number" },
+              createdAt: { type: "string" },
+            },
+            required: ["scoreInPercent", "createdAt"],
+          },
+          400: {
+            allOf: [{ $ref: "ErrorResponse#" }],
+            example: {
+              error: "Nieprawidłowy identyfikator quizu",
+            },
+          },
+          401: { $ref: "UnauthorizedErrorResponse#" },
+          403: {
+            allOf: [{ $ref: "ErrorResponse#" }],
+            example: {
+              error: "Użytkownik nie ma dostępu do tej lekcji quizu",
+            },
+          },
+          404: {
+            allOf: [{ $ref: "ErrorResponse#" }],
+            example: {
+              error: "Quiz nie znaleziony",
+            },
+          },
+          500: { $ref: "ServerErrorResponse#" },
+        },
+      },
+    },
+    handlerWrapper(saveQuizAnswers)
   );
 }

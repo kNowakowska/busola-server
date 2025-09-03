@@ -116,7 +116,9 @@ model UserToLesson {
 }
 
 model QuizAttempt {
-  uuid   String @id @unique @default(dbgenerated("gen_random_uuid()")) @db.Uuid
+  uuid      String   @id @unique @default(dbgenerated("gen_random_uuid()")) @db.Uuid
+  createdAt DateTime @default(now()) @db.Timestamptz(6)
+
   userId String @db.Uuid
   user   User   @relation(fields: [userId], references: [uuid], onDelete: Cascade)
   quizId String @db.Uuid
@@ -131,7 +133,9 @@ model QuizAttempt {
 }
 
 model QuestionResponse {
-  uuid       String            @id @unique @default(dbgenerated("gen_random_uuid()")) @db.Uuid
+  uuid      String   @id @unique @default(dbgenerated("gen_random_uuid()")) @db.Uuid
+  createdAt DateTime @default(now()) @db.Timestamptz(6)
+
   attemptId  String            @db.Uuid
   attempt    QuizAttempt       @relation(fields: [attemptId], references: [uuid], onDelete: Cascade)
   questionId String            @db.Uuid
@@ -144,6 +148,8 @@ model QuestionResponse {
 }
 
 model AnswerSelection {
+  createdAt DateTime @default(now()) @db.Timestamptz(6)
+
   answer     Answer           @relation(fields: [answerId], references: [uuid], onDelete: Restrict)
   answerId   String           @db.Uuid
   responseId String           @db.Uuid

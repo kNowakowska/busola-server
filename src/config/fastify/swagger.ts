@@ -169,8 +169,19 @@ export function swaggerConfig(fastify: FastifyInstance) {
               uuid: { type: "string" },
               name: { type: "string" },
               questions: { type: "array", items: { $ref: "Question#" } },
+              attempts: {
+                type: "array",
+                items: {
+                  type: "object",
+                  properties: {
+                    scoreInPercent: { type: "number" },
+                    createdAt: { type: "string" },
+                  },
+                },
+                required: ["scoreInPercent", "createdAt"],
+              },
             },
-            required: ["uuid", "name", "questions"],
+            required: ["uuid", "name", "questions", "attempts"],
           },
           Course: {
             type: "object",
@@ -229,6 +240,23 @@ export function swaggerConfig(fastify: FastifyInstance) {
               notes: { type: "string" },
             },
             required: ["notes"],
+          },
+          SaveQuizAnswersPayload: {
+            type: "object",
+            properties: {
+              questions: {
+                type: "array",
+                items: {
+                  type: "object",
+                  properties: {
+                    uuid: { type: "string" },
+                    answer: { type: "string" },
+                  },
+                  required: ["uuid", "answer"],
+                },
+              },
+            },
+            required: ["questions"],
           },
           ContentfulEntryEvent: {
             type: "object",
@@ -422,8 +450,19 @@ export function swaggerConfig(fastify: FastifyInstance) {
       uuid: { type: "string" },
       name: { type: "string" },
       questions: { type: "array", items: { $ref: "Question#" } },
+      attempts: {
+        type: "array",
+        items: {
+          type: "object",
+          properties: {
+            scoreInPercent: { type: "number" },
+            createdAt: { type: "string" },
+          },
+        },
+        required: ["scoreInPercent", "createdAt"],
+      },
     },
-    required: ["uuid", "name", "questions"],
+    required: ["uuid", "name", "questions", "attempts"],
   });
 
   fastify.addSchema({
@@ -498,6 +537,22 @@ export function swaggerConfig(fastify: FastifyInstance) {
       notes: { type: "string" },
     },
     required: ["notes"],
+  });
+
+  fastify.addSchema({
+    $id: "SaveQuizAnswersPayload",
+    type: "object",
+    properties: {
+      questions: {
+        type: "array",
+        items: {
+          type: "object",
+          properties: { uuid: { type: "string" }, answer: { type: "string" } },
+          required: ["uuid", "answer"],
+        },
+      },
+    },
+    required: ["questions"],
   });
 
   fastify.addSchema({
