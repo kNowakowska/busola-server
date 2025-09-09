@@ -9,10 +9,30 @@
     "prisma:migrate": "bun prisma migrate dev",
     "prisma:format": "bun prisma format",
     "prisma:generate": "bun prisma generate",
-    "prisma:schema": "bun run prisma:format && bun run prisma:migrate && bun run prisma:generate"
+    "prisma:schema": "bun run prisma:format && bun run prisma:migrate && bun run prisma:generate",
+    "prepare": "husky",
+    "build": "tsc -p tsconfig.json",
+    "typecheck": "tsc --noEmit -p tsconfig.json",
+    "lint": "eslint . --ext .ts,.mts,.cts",
+    "format": "prettier . --check"
+  },
+  "lint-staged": {
+    "src/**/!(generated)/**/*.{ts,mts,cts}": [
+      "prettier --write --ignore-unknown",
+      "eslint --fix --max-warnings=0",
+      "tsc --noEmit"
+    ]
   },
   "devDependencies": {
-    "@types/bun": "latest"
+    "@types/bun": "latest",
+    "@typescript-eslint/eslint-plugin": "^8.43.0",
+    "@typescript-eslint/parser": "^8.43.0",
+    "eslint": "^9",
+    "globals": "^16.3.0",
+    "husky": "^9.1.7",
+    "lint-staged": "^16.1.6",
+    "prettier": "^3.6.2",
+    "typescript-eslint": "^8"
   },
   "peerDependencies": {
     "typescript": "^5"

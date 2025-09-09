@@ -10,5 +10,7 @@
     "outDir": "dist",
     "preserveSymlinks": true
   },
-  "include": ["src"]
+  "include": ["src"],
+  "exclude": ["src/generated/prisma"]
+
 }

@@ -1,12 +1,13 @@
-import { FastifyInstance } from "fastify";
-import {
+import type { FastifyInstance } from "fastify";
+import type {
   AnswerEntryEvent,
-  ContentfulContentType,
   ContentfulEntryEvent,
   CourseEntryEvent,
   LessonEntryEvent,
   QuestionEntryEvent,
-  QuizEntryEvent,
+  QuizEntryEvent} from "../types/Contentful";
+import {
+  ContentfulContentType
 } from "../types/Contentful";
 
 import { upsertCourse } from "../services/database/course.service";
@@ -25,11 +26,7 @@ import {
   updateQuestionToQuiz,
   upsertQuestion,
 } from "../services/database/question.service";
-import {
-  getQuizByCmsId,
-  updateQuizToLesson,
-  upsertQuiz,
-} from "../services/database/quiz.service";
+import { getQuizByCmsId, updateQuizToLesson, upsertQuiz } from "../services/database/quiz.service";
 
 export async function webhookRoutes(fastify: FastifyInstance) {
   fastify.post(
@@ -63,16 +60,16 @@ export async function webhookRoutes(fastify: FastifyInstance) {
               });
 
               // update lessons assigned to the course in DB
-              const lessonsIds = course.lessons["en-US"].map(
-                (lesson) => lesson.sys.id
-              );
+              const lessonsIds = course.lessons["en-US"].map((lesson) => lesson.sys.id);
 
-              lessonsIds.forEach(async (lessonId) => {
-                const lesson = await getLessonByCmsId(lessonId);
-                if (lesson) {
-                  await updateLessonToCourse(lesson.uuid, createdCourse.uuid);
-                }
-              });
+              await Promise.all(
+                lessonsIds.map(async (lessonId) => {
+                  const lesson = await getLessonByCmsId(lessonId);
+                  if (lesson) {
+                    await updateLessonToCourse(lesson.uuid, createdCourse.uuid);
+                  }
+                }),
+              );
             }
             break;
           case ContentfulContentType.Lesson:
@@ -84,7 +81,7 @@ export async function webhookRoutes(fastify: FastifyInstance) {
                 lesson.name["en-US"],
                 lesson.content["en-US"],
                 lesson.order["en-US"],
-                lesson.videoUrl["en-US"]
+                lesson.videoUrl["en-US"],
               );
 
               // update quizes assigned to the lesson in DB
@@ -101,22 +98,19 @@ export async function webhookRoutes(fastify: FastifyInstance) {
             {
               // create or update question in DB
               const quiz = (payload as QuizEntryEvent).fields;
-              const createdQuiz = await upsertQuiz(
-                payload.sys.id,
-                quiz.name["en-US"]
-              );
+              const createdQuiz = await upsertQuiz(payload.sys.id, quiz.name["en-US"]);
 
-              const questionsIds = quiz.questions["en-US"].map(
-                (question) => question.sys.id
-              );
+              const questionsIds = quiz.questions["en-US"].map((question) => question.sys.id);
 
               // update questions assigned to the quiz in DB
-              questionsIds.forEach(async (questionId) => {
-                const question = await getQuestionByCmsId(questionId);
-                if (question) {
-                  await updateQuestionToQuiz(createdQuiz.uuid, question.uuid);
-                }
-              });
+              await Promise.all(
+                questionsIds.map(async (questionId) => {
+                  const question = await getQuestionByCmsId(questionId);
+                  if (question) {
+                    await updateQuestionToQuiz(createdQuiz.uuid, question.uuid);
+                  }
+                }),
+              );
             }
             break;
 
@@ -127,23 +121,20 @@ export async function webhookRoutes(fastify: FastifyInstance) {
               const createdQuestion = await upsertQuestion(
                 payload.sys.id,
                 question.questionText["en-US"],
-                question.questionType["en-US"]
+                question.questionType["en-US"],
               );
 
-              const answersIds = question.options["en-US"].map(
-                (answer) => answer.sys.id
-              );
+              const answersIds = question.options["en-US"].map((answer) => answer.sys.id);
 
               // update answers assigned to the question in DB
-              answersIds.forEach(async (answerId) => {
-                const answer = await getAnswerByCmsId(answerId);
-                if (answer) {
-                  await updateAnswerToQuestion(
-                    answer.uuid,
-                    createdQuestion.uuid
-                  );
-                }
-              });
+              await Promise.all(
+                answersIds.map(async (answerId) => {
+                  const answer = await getAnswerByCmsId(answerId);
+                  if (answer) {
+                    await updateAnswerToQuestion(answer.uuid, createdQuestion.uuid);
+                  }
+                }),
+              );
             }
             break;
           case ContentfulContentType.Answer:
@@ -153,15 +144,12 @@ export async function webhookRoutes(fastify: FastifyInstance) {
               await upsertAnswer(
                 payload.sys.id,
                 answer.answerText["en-US"],
-                answer.isCorrect["en-US"]
+                answer.isCorrect["en-US"],
               );
             }
             break;
           default:
-            console.log(
-              "Unsupported content type",
-              payload.sys.contentType.sys.id
-            );
+            console.log("Unsupported content type", payload.sys.contentType.sys.id);
         }
 
         return res.send(true);
@@ -169,6 +157,6 @@ export async function webhookRoutes(fastify: FastifyInstance) {
         console.error(err);
         return res.status(400).send(err);
       }
-    }
+    },
   );
 }

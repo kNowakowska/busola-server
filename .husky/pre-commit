@@ -1,0 +1,5 @@
+#!/usr/bin/env sh
+echo "🔎 Running pre-commit hooks..."
+
+# Run lint-staged on staged files only
+bunx --bun lint-staged
