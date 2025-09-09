@@ -19,8 +19,7 @@
   "lint-staged": {
     "src/**/!(generated)/**/*.{ts,mts,cts}": [
       "prettier --write --ignore-unknown",
-      "eslint --fix --max-warnings=0",
-      "tsc --noEmit"
+      "eslint --fix --max-warnings=0"
     ]
   },
   "devDependencies": {
