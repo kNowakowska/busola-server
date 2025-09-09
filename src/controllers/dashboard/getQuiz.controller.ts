@@ -40,11 +40,14 @@ export async function getQuiz(req: FastifyRequest, res: FastifyReply) {
 
   return res.status(200).send({
     ...quiz,
-    attempts: quiz.attempts.map((attempt) => ({
-      ...attempt,
-      scoreInPercent: Math.round(
-        (attempt.score * 100) / quiz.questionsToDrawCount
-      ),
-    })),
+    attempts: quiz.attempts
+      .sort((a, b) => b.createdAt.getTime() - a.createdAt.getTime())
+      .slice(0, 5)
+      .map((attempt) => ({
+        ...attempt,
+        scoreInPercent: Math.round(
+          (attempt.score * 100) / quiz.questionsToDrawCount
+        ),
+      })),
   });
 }
