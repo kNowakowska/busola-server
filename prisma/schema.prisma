@@ -25,13 +25,16 @@ model User {
 }
 
 model Answer {
-  uuid            String            @id @unique @default(dbgenerated("gen_random_uuid()")) @db.Uuid
-  createdAt       DateTime          @default(now()) @db.Timestamptz(6)
-  text            String
-  isCorrect       Boolean
+  uuid      String   @id @unique @default(dbgenerated("gen_random_uuid()")) @db.Uuid
+  createdAt DateTime @default(now()) @db.Timestamptz(6)
+  cmsId     String   @unique
+
+  text       String
+  isCorrect  Boolean
+  imageCMSId String?
+
   question        Question?         @relation(fields: [questionId], references: [uuid])
   questionId      String?           @db.Uuid
-  cmsId           String            @unique
   AnswerSelection AnswerSelection[]
 }
 
@@ -42,53 +45,65 @@ enum QuestionType {
 }
 
 model Question {
-  uuid             String             @id @unique @default(dbgenerated("gen_random_uuid()")) @db.Uuid
-  createdAt        DateTime           @default(now()) @db.Timestamptz(6)
-  text             String
-  options          Answer[]
-  type             QuestionType       @default(SINGLE)
+  uuid      String   @id @unique @default(dbgenerated("gen_random_uuid()")) @db.Uuid
+  createdAt DateTime @default(now()) @db.Timestamptz(6)
+  cmsId     String   @unique
+
+  text       String
+  options    Answer[]
+  type       QuestionType @default(SINGLE)
+  imageCMSId String?
+
   quiz             Quiz?              @relation(fields: [quizId], references: [uuid])
   quizId           String?            @db.Uuid
-  cmsId            String             @unique
   QuestionResponse QuestionResponse[]
 }
 
 model Quiz {
-  uuid                 String        @id @unique @default(dbgenerated("gen_random_uuid()")) @db.Uuid
-  createdAt            DateTime      @default(now()) @db.Timestamptz(6)
+  uuid      String   @id @unique @default(dbgenerated("gen_random_uuid()")) @db.Uuid
+  createdAt DateTime @default(now()) @db.Timestamptz(6)
+  cmsId     String   @unique
+
   name                 String
-  questions            Question[]
-  lesson               Lesson?       @relation(fields: [lessonId], references: [uuid])
-  lessonId             String?       @db.Uuid
-  cmsId                String        @unique
-  attempts             QuizAttempt[]
-  questionsToDrawCount Int           @default(10)
+  questionsToDrawCount Int    @default(10)
+
+  questions Question[]
+  lesson    Lesson?       @relation(fields: [lessonId], references: [uuid])
+  lessonId  String?       @db.Uuid
+  attempts  QuizAttempt[]
 }
 
 model Lesson {
-  uuid      String         @id @unique @default(dbgenerated("gen_random_uuid()")) @db.Uuid
-  createdAt DateTime       @default(now()) @db.Timestamptz(6)
-  name      String
-  content   Json
-  videoUrl  String?
-  quiz      Quiz[]
-  order     Int
-  course    Course?        @relation(fields: [courseId], references: [uuid])
-  courseId  String?        @db.Uuid
-  cmsId     String         @unique
-  users     UserToLesson[]
+  uuid      String   @id @unique @default(dbgenerated("gen_random_uuid()")) @db.Uuid
+  createdAt DateTime @default(now()) @db.Timestamptz(6)
+  cmsId     String   @unique
+
+  name           String
+  order          Int
+  videoUrl       String  @default("")
+  content        Json
+  tasksVideoUrl  String?
+  tasksFileCMSId String?
+
+  quiz     Quiz[]
+  course   Course?        @relation(fields: [courseId], references: [uuid])
+  courseId String?        @db.Uuid
+  users    UserToLesson[]
 }
 
 model Course {
-  uuid             String         @id @unique @default(dbgenerated("gen_random_uuid()")) @db.Uuid
-  createdAt        DateTime       @default(now()) @db.Timestamptz(6)
+  uuid      String   @id @unique @default(dbgenerated("gen_random_uuid()")) @db.Uuid
+  createdAt DateTime @default(now()) @db.Timestamptz(6)
+  cmsId     String   @unique
+
   name             String
-  shortDescription String         @default("")
-  description      String         @default("")
-  imageCMSId       String         @default("")
-  lessons          Lesson[]
-  users            UserToCourse[]
-  cmsId            String         @unique
+  shortDescription String  @default("")
+  description      String?
+  imageCMSId       String  @default("")
+  videoUrl         String?
+
+  lessons Lesson[]
+  users   UserToCourse[]
 }
 
 model UserToCourse {

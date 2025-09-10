@@ -8,9 +8,7 @@ type ContentfulLink<TLinkType extends string> = {
 
 type LocalizedValue<T> = Record<"en-US", T>;
 
-export interface ContentfulEntryEvent<
-  TFields = Record<string, LocalizedValue<unknown>>,
-> {
+export interface ContentfulEntryEvent<TFields = Record<string, LocalizedValue<unknown>>> {
   metadata: {
     tags: unknown[];
     concepts: unknown[];
@@ -36,34 +34,40 @@ export interface ContentfulEntryEvent<
 
 export type CourseFields = {
   name: LocalizedValue<string>;
-  lessons: LocalizedValue<ContentfulLink<"Entry">[]>;
+  image: LocalizedValue<ContentfulLink<"Asset">>;
   shortDescription: LocalizedValue<string>;
   description: LocalizedValue<string>;
-  image: LocalizedValue<ContentfulLink<"Asset">>;
+  videoUrl: LocalizedValue<string>;
+  lessons: LocalizedValue<ContentfulLink<"Entry">[]>;
 };
 
 export type LessonFields = {
   name: LocalizedValue<string>;
-  content: LocalizedValue<string>;
-  videoUrl: LocalizedValue<string>;
   order: LocalizedValue<number>;
+  videoUrl: LocalizedValue<string>;
+  content: LocalizedValue<string>;
+  videoUrlForTasks: LocalizedValue<string>;
+  tasksFile: LocalizedValue<ContentfulLink<"Asset">>;
   quiz: LocalizedValue<ContentfulLink<"Entry">>;
 };
 
 export type QuizFields = {
   name: LocalizedValue<string>;
+  numberOfQuestions: LocalizedValue<number>;
   questions: LocalizedValue<ContentfulLink<"Entry">[]>;
 };
 
 export type QuestionFields = {
-  questionText: LocalizedValue<string>;
-  questionType: LocalizedValue<QuestionType>;
+  name: LocalizedValue<string>;
+  type: LocalizedValue<QuestionType>;
+  image: LocalizedValue<ContentfulLink<"Asset">>;
   options: LocalizedValue<ContentfulLink<"Entry">[]>;
 };
 
 export type AnswerFields = {
-  answerText: LocalizedValue<string>;
+  name: LocalizedValue<string>;
   isCorrect: LocalizedValue<boolean>;
+  image: LocalizedValue<ContentfulLink<"Asset">>;
 };
 
 export type CourseEntryEvent = ContentfulEntryEvent<CourseFields>;

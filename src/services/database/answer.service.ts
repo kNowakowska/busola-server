@@ -1,10 +1,6 @@
 import { prisma } from "../../config/prisma";
 
-export async function createAnswer(
-  answer: string,
-  isCorrect: boolean,
-  cmsId: string
-) {
+export async function createAnswer(answer: string, isCorrect: boolean, cmsId: string) {
   console.log("Creating answer:", answer);
   return prisma.answer.create({
     data: { text: answer, isCorrect, cmsId },
@@ -17,11 +13,7 @@ export async function getAnswerByCmsId(cmsId: string) {
   });
 }
 
-export async function updateAnswer(
-  answerId: string,
-  answer: string,
-  isCorrect: boolean
-) {
+export async function updateAnswer(answerId: string, answer: string, isCorrect: boolean) {
   return prisma.answer.update({
     where: { uuid: answerId },
     data: { text: answer, isCorrect },
@@ -31,19 +23,17 @@ export async function updateAnswer(
 export async function upsertAnswer(
   cmsId: string,
   answer: string,
-  isCorrect: boolean
+  isCorrect: boolean,
+  imageCMSId: string,
 ) {
   return prisma.answer.upsert({
     where: { cmsId },
-    update: { text: answer, isCorrect },
-    create: { text: answer, isCorrect, cmsId },
+    update: { text: answer, isCorrect, imageCMSId },
+    create: { text: answer, isCorrect, cmsId, imageCMSId },
   });
 }
 
-export async function updateAnswerToQuestion(
-  answerId: string,
-  questionId: string
-) {
+export async function updateAnswerToQuestion(answerId: string, questionId: string) {
   return prisma.answer.update({
     where: { uuid: answerId },
     data: { questionId },

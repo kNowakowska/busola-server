@@ -10,7 +10,8 @@ export async function upsertCourse(
     shortDescription: string;
     description: string;
     imageCMSId: string;
-  }
+    videoUrl: string;
+  },
 ) {
   return prisma.course.upsert({
     where: { cmsId },
@@ -21,10 +22,7 @@ export async function upsertCourse(
   });
 }
 
-export async function getCourseWithLessonsById(
-  courseId: string,
-  userId: string
-) {
+export async function getCourseWithLessonsById(courseId: string, userId: string) {
   console.log(`Fetching course by id: ${courseId} for user: ${userId}`);
   const course = await prisma.course.findUnique({
     where: {
@@ -66,8 +64,7 @@ export async function getCourseWithLessonsById(
 
   const isRelatedToUser = course._count.users > 0;
 
-  if (!isRelatedToUser)
-    throw new ForbiddenError("User doesn't have access to this course");
+  if (!isRelatedToUser) throw new ForbiddenError("User doesn't have access to this course");
 
   return course;
 }
