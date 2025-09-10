@@ -1,9 +1,6 @@
-import { FastifyReply, FastifyRequest } from "fastify";
+import type { FastifyReply, FastifyRequest } from "fastify";
 
-import {
-  getUserByEmail,
-  saveUserVerificationCode,
-} from "../../services/database/user.service";
+import { getUserByEmail, saveUserVerificationCode } from "../../services/database/user.service";
 import { sendEmail } from "../../config/resend";
 
 type ResetPasswordRequestPayload = {
@@ -12,7 +9,7 @@ type ResetPasswordRequestPayload = {
 
 export async function resetPasswordRequest(
   req: FastifyRequest<{ Body: ResetPasswordRequestPayload }>,
-  res: FastifyReply
+  res: FastifyReply,
 ) {
   const { email } = req.body;
 
@@ -28,11 +25,7 @@ export async function resetPasswordRequest(
   await saveUserVerificationCode(email, code.toString());
 
   console.log("Sending email to user:", email);
-  await sendEmail(
-    email,
-    "Password reset request",
-    `Your verificationcode is <b>${code}</b>`
-  );
+  await sendEmail(email, "Password reset request", `Your verificationcode is <b>${code}</b>`);
 
   return res.status(200).send({ message: "Kod weryfikacyjny wysłany" });
 }

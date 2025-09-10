@@ -1,4 +1,4 @@
-import { FastifyReply, FastifyRequest } from "fastify";
+import type { FastifyReply, FastifyRequest } from "fastify";
 
 import { getUserByEmail } from "../../services/database/user.service";
 
@@ -9,7 +9,7 @@ type VerifyCodePayload = {
 
 export async function verifyCode(
   req: FastifyRequest<{ Body: VerifyCodePayload }>,
-  res: FastifyReply
+  res: FastifyReply,
 ) {
   const { email, code } = req.body;
   const user = await getUserByEmail(email);

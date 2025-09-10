@@ -1,4 +1,4 @@
-import { FastifyInstance } from "fastify";
+import type { FastifyInstance } from "fastify";
 
 import { handlerWrapper } from "../utils/handlerWrapper";
 
@@ -25,7 +25,7 @@ export async function dashboardRoutes(fastify: FastifyInstance) {
         },
       },
     },
-    handlerWrapper(getCurrentUser)
+    handlerWrapper(getCurrentUser),
   );
 
   fastify.get(
@@ -67,7 +67,7 @@ export async function dashboardRoutes(fastify: FastifyInstance) {
         },
       },
     },
-    handlerWrapper(getCourse)
+    handlerWrapper(getCourse),
   );
 
   fastify.get(
@@ -110,7 +110,7 @@ export async function dashboardRoutes(fastify: FastifyInstance) {
         },
       },
     },
-    handlerWrapper(getLesson)
+    handlerWrapper(getLesson),
   );
 
   fastify.post(
@@ -154,7 +154,7 @@ export async function dashboardRoutes(fastify: FastifyInstance) {
         },
       },
     },
-    handlerWrapper(saveNotes)
+    handlerWrapper(saveNotes),
   );
 
   fastify.post(
@@ -197,7 +197,7 @@ export async function dashboardRoutes(fastify: FastifyInstance) {
         },
       },
     },
-    handlerWrapper(completeLesson)
+    handlerWrapper(completeLesson),
   );
 
   fastify.get(
@@ -241,7 +241,7 @@ export async function dashboardRoutes(fastify: FastifyInstance) {
         },
       },
     },
-    handlerWrapper(getQuiz)
+    handlerWrapper(getQuiz),
   );
 
   fastify.post(
@@ -293,6 +293,6 @@ export async function dashboardRoutes(fastify: FastifyInstance) {
         },
       },
     },
-    handlerWrapper(saveQuizAnswers)
+    handlerWrapper(saveQuizAnswers),
   );
 }

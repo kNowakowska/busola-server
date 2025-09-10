@@ -1,9 +1,6 @@
-import { FastifyInstance, FastifyReply, FastifyRequest } from "fastify";
+import type { FastifyInstance, FastifyReply, FastifyRequest } from "fastify";
 
-import {
-  getUserByEmail,
-  updateUserPassword,
-} from "../../services/database/user.service";
+import { getUserByEmail, updateUserPassword } from "../../services/database/user.service";
 import { hashPassword } from "../../utils/hashPassword";
 import { password as passwordValidator } from "../../validators/password";
 
@@ -16,7 +13,7 @@ type ResetInitialPasswordPayload = {
 export async function resetInitialPassword(
   req: FastifyRequest<{ Body: ResetInitialPasswordPayload }>,
   res: FastifyReply,
-  fastify: FastifyInstance
+  fastify: FastifyInstance,
 ) {
   const { password, initialPassword, email } = req.body;
 
@@ -34,9 +31,7 @@ export async function resetInitialPassword(
   console.log("Validating new password", password);
   const validatedPassword = passwordValidator().safeParse(password);
   if (!validatedPassword.success) {
-    return res
-      .status(400)
-      .send({ error: validatedPassword.error.issues[0].message });
+    return res.status(400).send({ error: validatedPassword.error.issues[0].message });
   }
 
   const hashedPassword = await hashPassword(validatedPassword.data);
@@ -49,7 +44,7 @@ export async function resetInitialPassword(
     {
       key: process.env.JWT_REFRESH_SECRET!,
       expiresIn: "7d",
-    }
+    },
   );
 
   return res
