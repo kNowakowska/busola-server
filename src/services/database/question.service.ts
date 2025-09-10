@@ -13,11 +13,7 @@ function mapQuestionType(type: ContentfulQuestionType) {
   }
 }
 
-export async function createQuestion(
-  question: string,
-  type: QuestionType,
-  cmsId: string
-) {
+export async function createQuestion(question: string, type: QuestionType, cmsId: string) {
   console.log("Creating question:", question);
   return prisma.question.create({
     data: { text: question, type, cmsId },
@@ -30,11 +26,7 @@ export async function getQuestionByCmsId(cmsId: string) {
   });
 }
 
-export async function updateQuestion(
-  questionId: string,
-  question: string,
-  type: QuestionType
-) {
+export async function updateQuestion(questionId: string, question: string, type: QuestionType) {
   return prisma.question.update({
     where: { uuid: questionId },
     data: { text: question, type },
@@ -51,25 +43,26 @@ export async function createOrUpdateQuestion(questionPayload: {
     return updateQuestion(
       question.uuid,
       questionPayload.text,
-      mapQuestionType(questionPayload.type)
+      mapQuestionType(questionPayload.type),
     );
   }
   return createQuestion(
     questionPayload.text,
     mapQuestionType(questionPayload.type),
-    questionPayload.cmsId
+    questionPayload.cmsId,
   );
 }
 
 export async function upsertQuestion(
   cmsId: string,
   question: string,
-  type: ContentfulQuestionType
+  type: ContentfulQuestionType,
+  imageCMSId: string,
 ) {
   return prisma.question.upsert({
     where: { cmsId },
-    update: { text: question, type: mapQuestionType(type) },
-    create: { text: question, type: mapQuestionType(type), cmsId },
+    update: { text: question, type: mapQuestionType(type), imageCMSId },
+    create: { text: question, type: mapQuestionType(type), cmsId, imageCMSId },
   });
 }
 

@@ -1,4 +1,4 @@
-import { FastifyRequest, FastifyReply } from "fastify";
+import type { FastifyRequest, FastifyReply } from "fastify";
 
 import { getQuizById } from "../../services/database/quiz.service";
 import {
@@ -20,9 +20,7 @@ export async function saveQuizAnswers(req: FastifyRequest, res: FastifyReply) {
   };
 
   if (!courseId || !lessonId || !quizId) {
-    return res
-      .status(400)
-      .send({ error: "Nieprawidłowy identyfikator kursu, lekcji lub quizu" });
+    return res.status(400).send({ error: "Nieprawidłowy identyfikator kursu, lekcji lub quizu" });
   }
 
   if (!questions) {
@@ -41,19 +39,17 @@ export async function saveQuizAnswers(req: FastifyRequest, res: FastifyReply) {
     questions.map(async (question) => {
       const roleQuestion = quiz.questions.find((q) => q.uuid === question.uuid);
       const correctAnswer = roleQuestion?.options?.find((o) => o.isCorrect);
-      const isCorrect = correctAnswer
-        ? correctAnswer.uuid === question.answer
-        : false;
+      const isCorrect = correctAnswer ? correctAnswer.uuid === question.answer : false;
 
       score += isCorrect ? 1 : 0;
 
       const questionResponse = await createQuestionResponse(
         quizAttempt.uuid,
         question.uuid,
-        isCorrect
+        isCorrect,
       );
       return createAnswerSelection(questionResponse.uuid, question.answer);
-    })
+    }),
   );
 
   await updateQuizAttemptScore(quizAttempt.uuid, score);

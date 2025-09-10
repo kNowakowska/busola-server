@@ -1,4 +1,4 @@
-import { FastifyReply, FastifyRequest } from "fastify";
+import type { FastifyReply, FastifyRequest } from "fastify";
 
 import { getUserWithCoursesByUserId } from "../../services/database/user.service";
 
@@ -16,9 +16,7 @@ export async function getCurrentUser(req: FastifyRequest, res: FastifyReply) {
     courses: user.courses.map(({ course }) => ({
       ...course,
       lessonsCount: course.lessons.length,
-      lessonsCompleted: course.lessons.filter(
-        ({ users }) => users[0]?.isCompleted || false
-      ).length,
+      lessonsCompleted: course.lessons.filter(({ users }) => users[0]?.isCompleted || false).length,
     })),
   });
 }

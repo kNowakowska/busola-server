@@ -58,11 +58,11 @@ export async function updateQuizToLesson(quizId: string, lessonId: string) {
   });
 }
 
-export async function upsertQuiz(cmsId: string, name: string) {
+export async function upsertQuiz(cmsId: string, name: string, questionsToDrawCount: number) {
   return prisma.quiz.upsert({
     where: { cmsId },
-    update: { name },
-    create: { name, cmsId },
+    update: { name, questionsToDrawCount },
+    create: { name, cmsId, questionsToDrawCount },
   });
 }
 

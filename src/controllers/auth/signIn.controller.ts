@@ -1,4 +1,4 @@
-import { FastifyInstance, FastifyReply, FastifyRequest } from "fastify";
+import type { FastifyInstance, FastifyReply, FastifyRequest } from "fastify";
 
 import { getUserByEmail } from "../../services/database/user.service";
 import { verifyPassword } from "../../utils/hashPassword";
@@ -11,7 +11,7 @@ type SignInPayload = {
 export async function signIn(
   req: FastifyRequest<{ Body: SignInPayload }>,
   res: FastifyReply,
-  fastify: FastifyInstance
+  fastify: FastifyInstance,
 ) {
   const { password, email } = req.body;
 
@@ -41,7 +41,7 @@ export async function signIn(
         {
           key: process.env.JWT_REFRESH_SECRET!,
           expiresIn: "7d",
-        }
+        },
       );
 
       return res

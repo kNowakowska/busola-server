@@ -1,6 +1,6 @@
 import { prisma } from "../../config/prisma";
 
-import { Lesson } from "../../generated/prisma";
+import type { Lesson } from "../../generated/prisma";
 
 import { ForbiddenError } from "../../errors/ForbiddenError";
 import { NotFoundError } from "../../errors/NotFoundError";
@@ -24,23 +24,19 @@ export async function upsertLesson(
   name: string,
   content: string,
   order: number,
-  videoUrl?: string
+  videoUrl?: string,
+  tasksVideoUrl?: string,
+  tasksFileCMSId?: string,
 ) {
   return prisma.lesson.upsert({
     where: { cmsId },
-    update: { name, content, videoUrl, order },
-    create: { name, content, videoUrl, order, cmsId },
+    update: { name, content, videoUrl, order, tasksVideoUrl, tasksFileCMSId },
+    create: { name, content, videoUrl, order, cmsId, tasksVideoUrl, tasksFileCMSId },
   });
 }
 
-export async function getLessonById(
-  lessonId: string,
-  courseId: string,
-  userId: string
-) {
-  console.log(
-    `Fetching lesson by id: ${lessonId} for course: ${courseId} and user: ${userId}`
-  );
+export async function getLessonById(lessonId: string, courseId: string, userId: string) {
+  console.log(`Fetching lesson by id: ${lessonId} for course: ${courseId} and user: ${userId}`);
   const lesson = await prisma.lesson.findUnique({
     where: {
       uuid: lessonId,
@@ -89,14 +85,13 @@ export async function getLessonById(
 
   const isRelatedToUser = (lesson.course?._count.users ?? 0) > 0;
 
-  if (!isRelatedToUser)
-    throw new ForbiddenError("User doesn't have access to this course");
+  if (!isRelatedToUser) throw new ForbiddenError("User doesn't have access to this course");
 
   return lesson;
 }
 
 export async function getPreviousLessonId(
-  lesson: Partial<Lesson> & Required<Pick<Lesson, "order" | "courseId">>
+  lesson: Partial<Lesson> & Required<Pick<Lesson, "order" | "courseId">>,
 ) {
   if (lesson.order === 1) return null;
 
@@ -110,7 +105,7 @@ export async function getPreviousLessonId(
 }
 
 export async function getNextLessonId(
-  lesson: Partial<Lesson> & Required<Pick<Lesson, "order" | "courseId">>
+  lesson: Partial<Lesson> & Required<Pick<Lesson, "order" | "courseId">>,
 ) {
   const nextLesson = await prisma.lesson.findFirst({
     where: {
@@ -121,11 +116,7 @@ export async function getNextLessonId(
   return nextLesson?.uuid;
 }
 
-export async function saveNotesTolesson(
-  lesson: Lesson,
-  userId: string,
-  notes: string
-) {
+export async function saveNotesTolesson(lesson: Lesson, userId: string, notes: string) {
   return prisma.userToLesson.upsert({
     where: {
       userId_lessonId: {

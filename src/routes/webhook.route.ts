@@ -5,10 +5,9 @@ import type {
   CourseEntryEvent,
   LessonEntryEvent,
   QuestionEntryEvent,
-  QuizEntryEvent} from "../types/Contentful";
-import {
-  ContentfulContentType
+  QuizEntryEvent,
 } from "../types/Contentful";
+import { ContentfulContentType } from "../types/Contentful";
 
 import { upsertCourse } from "../services/database/course.service";
 import {
@@ -57,6 +56,7 @@ export async function webhookRoutes(fastify: FastifyInstance) {
                 shortDescription: course.shortDescription["en-US"],
                 description: course.description["en-US"],
                 imageCMSId: course.image["en-US"].sys.id,
+                videoUrl: course.videoUrl["en-US"],
               });
 
               // update lessons assigned to the course in DB
@@ -82,6 +82,8 @@ export async function webhookRoutes(fastify: FastifyInstance) {
                 lesson.content["en-US"],
                 lesson.order["en-US"],
                 lesson.videoUrl["en-US"],
+                lesson.videoUrlForTasks["en-US"],
+                lesson.tasksFile["en-US"].sys.id,
               );
 
               // update quizes assigned to the lesson in DB
@@ -98,7 +100,11 @@ export async function webhookRoutes(fastify: FastifyInstance) {
             {
               // create or update question in DB
               const quiz = (payload as QuizEntryEvent).fields;
-              const createdQuiz = await upsertQuiz(payload.sys.id, quiz.name["en-US"]);
+              const createdQuiz = await upsertQuiz(
+                payload.sys.id,
+                quiz.name["en-US"],
+                quiz.numberOfQuestions["en-US"],
+              );
 
               const questionsIds = quiz.questions["en-US"].map((question) => question.sys.id);
 
@@ -120,8 +126,9 @@ export async function webhookRoutes(fastify: FastifyInstance) {
               const question = (payload as QuestionEntryEvent).fields;
               const createdQuestion = await upsertQuestion(
                 payload.sys.id,
-                question.questionText["en-US"],
-                question.questionType["en-US"],
+                question.name["en-US"],
+                question.type["en-US"],
+                question.image["en-US"].sys.id,
               );
 
               const answersIds = question.options["en-US"].map((answer) => answer.sys.id);
@@ -143,8 +150,9 @@ export async function webhookRoutes(fastify: FastifyInstance) {
               const answer = (payload as AnswerEntryEvent).fields;
               await upsertAnswer(
                 payload.sys.id,
-                answer.answerText["en-US"],
+                answer.name["en-US"],
                 answer.isCorrect["en-US"],
+                answer.image["en-US"].sys.id,
               );
             }
             break;

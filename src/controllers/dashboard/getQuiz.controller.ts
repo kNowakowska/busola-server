@@ -1,4 +1,4 @@
-import { FastifyReply, FastifyRequest } from "fastify";
+import type { FastifyReply, FastifyRequest } from "fastify";
 
 import { NotFoundError } from "../../errors/NotFoundError";
 import { ForbiddenError } from "../../errors/ForbiddenError";
@@ -29,13 +29,9 @@ export async function getQuiz(req: FastifyRequest, res: FastifyReply) {
       return res.status(404).send({ error: "Quiz nie znaleziony" });
     }
     if (error instanceof ForbiddenError) {
-      return res
-        .status(403)
-        .send({ error: "Użytkownik nie ma dostępu do tej lekcji quizu" });
+      return res.status(403).send({ error: "Użytkownik nie ma dostępu do tej lekcji quizu" });
     }
-    return res
-      .status(500)
-      .send({ error: "Coś poszło nie tak. Spróbuj ponownie później" });
+    return res.status(500).send({ error: "Coś poszło nie tak. Spróbuj ponownie później" });
   }
 
   return res.status(200).send({
@@ -45,9 +41,7 @@ export async function getQuiz(req: FastifyRequest, res: FastifyReply) {
       .slice(0, 5)
       .map((attempt) => ({
         ...attempt,
-        scoreInPercent: Math.round(
-          (attempt.score * 100) / quiz.questionsToDrawCount
-        ),
+        scoreInPercent: Math.round((attempt.score * 100) / quiz.questionsToDrawCount),
       })),
   });
 }

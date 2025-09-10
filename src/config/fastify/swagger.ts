@@ -1,4 +1,4 @@
-import { FastifyInstance } from "fastify";
+import type { FastifyInstance } from "fastify";
 
 import swagger from "@fastify/swagger";
 import swaggerUI from "@fastify/swagger-ui";
@@ -224,15 +224,7 @@ export function swaggerConfig(fastify: FastifyInstance) {
               notes: { type: "string", nullable: true },
               quizId: { type: "string", nullable: true },
             },
-            required: [
-              "uuid",
-              "name",
-              "content",
-              "videoUrl",
-              "order",
-              "courseId",
-              "isCompleted",
-            ],
+            required: ["uuid", "name", "content", "videoUrl", "order", "courseId", "isCompleted"],
           },
           SaveLessonNotesPayload: {
             type: "object",
@@ -481,15 +473,7 @@ export function swaggerConfig(fastify: FastifyInstance) {
       notes: { type: "string", nullable: true },
       quizId: { type: "string", nullable: true },
     },
-    required: [
-      "uuid",
-      "name",
-      "content",
-      "videoUrl",
-      "order",
-      "courseId",
-      "isCompleted",
-    ],
+    required: ["uuid", "name", "content", "videoUrl", "order", "courseId", "isCompleted"],
   });
 
   fastify.addSchema({

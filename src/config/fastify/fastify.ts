@@ -5,7 +5,7 @@ import fastifyJWT from "@fastify/jwt";
 import cors from "@fastify/cors";
 
 import { swaggerConfig } from "./swagger";
-import { UserTokenPayload } from "../../types/UserTokenPayload";
+import type { UserTokenPayload } from "../../types/UserTokenPayload";
 
 declare module "fastify" {
   interface FastifyRequest {

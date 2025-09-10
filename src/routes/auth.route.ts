@@ -1,4 +1,4 @@
-import { FastifyInstance } from "fastify";
+import type { FastifyInstance } from "fastify";
 
 import { signIn } from "../controllers/auth/signIn.controller";
 import { signOut } from "../controllers/auth/signOut.controller";
@@ -47,7 +47,7 @@ export async function authRoutes(fastify: FastifyInstance) {
         },
       },
     },
-    handlerWrapper((req, res) => signIn(req, res, fastify))
+    handlerWrapper((req, res) => signIn(req, res, fastify)),
   );
 
   fastify.post(
@@ -86,7 +86,7 @@ export async function authRoutes(fastify: FastifyInstance) {
         },
       },
     },
-    handlerWrapper((req, res) => resetInitialPassword(req, res, fastify))
+    handlerWrapper((req, res) => resetInitialPassword(req, res, fastify)),
   );
 
   fastify.post(
@@ -112,7 +112,7 @@ export async function authRoutes(fastify: FastifyInstance) {
         },
       },
     },
-    handlerWrapper((req, res) => refreshToken(req, res, fastify))
+    handlerWrapper((req, res) => refreshToken(req, res, fastify)),
   );
 
   fastify.post(
@@ -139,7 +139,7 @@ export async function authRoutes(fastify: FastifyInstance) {
         },
       },
     },
-    handlerWrapper(resetPasswordRequest)
+    handlerWrapper(resetPasswordRequest),
   );
 
   fastify.post(
@@ -172,7 +172,7 @@ export async function authRoutes(fastify: FastifyInstance) {
         },
       },
     },
-    handlerWrapper(verifyCode)
+    handlerWrapper(verifyCode),
   );
 
   fastify.post(
@@ -211,7 +211,7 @@ export async function authRoutes(fastify: FastifyInstance) {
         },
       },
     },
-    handlerWrapper(resetPassword)
+    handlerWrapper(resetPassword),
   );
 
   fastify.post(
@@ -231,6 +231,6 @@ export async function authRoutes(fastify: FastifyInstance) {
         },
       },
     },
-    handlerWrapper(signOut)
+    handlerWrapper(signOut),
   );
 }
