@@ -52,6 +52,14 @@ export async function getCourseWithLessonsById(courseId: string, userId: string)
           order: "asc",
         },
       },
+      users: {
+        select: {
+          createdAt: true,
+        },
+        where: {
+          userId,
+        },
+      },
       _count: {
         select: {
           users: { where: { userId } },
