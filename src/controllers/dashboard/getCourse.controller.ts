@@ -41,6 +41,7 @@ export async function getCourse(req: FastifyRequest, res: FastifyReply) {
 
   return res.status(200).send({
     ...course,
+    startedAt: course.users[0]!.createdAt,
     lessons,
     lessonsCompleted,
     lessonsCount: course.lessons.length,

@@ -197,6 +197,7 @@ export function swaggerConfig(fastify: FastifyInstance) {
                 type: "array",
                 items: { $ref: "#/components/schemas/LessonListItem" },
               },
+              startedAt: { type: "string", nullable: true },
             },
             required: [
               "uuid",
@@ -207,6 +208,7 @@ export function swaggerConfig(fastify: FastifyInstance) {
               "lessonsCompleted",
               "lessons",
               "lessonsCount",
+              "startedAt",
             ],
           },
           Lesson: {
@@ -488,6 +490,7 @@ export function swaggerConfig(fastify: FastifyInstance) {
       lessonsCompleted: { type: "number" },
       lessonsCount: { type: "number" },
       lessons: { type: "array", items: { $ref: "LessonListItem#" } },
+      startedAt: { type: "string", nullable: true },
     },
     required: [
       "uuid",
@@ -498,6 +501,7 @@ export function swaggerConfig(fastify: FastifyInstance) {
       "lessonsCompleted",
       "lessonsCount",
       "lessons",
+      "startedAt",
     ],
   });
 
