@@ -39,7 +39,7 @@ fastify.register(cors, {
 swaggerConfig(fastify);
 
 fastify.addHook("onRequest", (req, res, done) => {
-  if (req.url.includes("/auth")) {
+  if (req.url.includes("/auth") || req.url.includes("/blog")) {
     done();
     return;
   }
