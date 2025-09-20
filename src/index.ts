@@ -11,8 +11,8 @@ fastify.register(webhookRoutes);
 
 const start = async () => {
   try {
-    await fastify.listen({ port: 3050 });
-    console.log("Server running on http://localhost:3050");
+    await fastify.listen({ port: +process.env.PORT! });
+    console.log(`Server running on port ${process.env.PORT!}`);
   } catch (err) {
     fastify.log.error(err);
     process.exit(1);
