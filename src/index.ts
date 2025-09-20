@@ -1,3 +1,5 @@
+import "dotenv/config";
+
 import { fastify } from "./config/fastify/fastify";
 
 import { authRoutes } from "./routes/auth.route";
