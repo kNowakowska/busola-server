@@ -2,4 +2,4 @@
 echo "🔎 Running pre-commit hooks..."
 
 # Run lint-staged on staged files only
-bunx --bun lint-staged
+npm run lint-staged

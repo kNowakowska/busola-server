@@ -1,4 +1,4 @@
-import { omit } from "lodash";
+import omit from "lodash/omit";
 import type { FastifyReply, FastifyRequest } from "fastify";
 
 import { NotFoundError } from "../../errors/NotFoundError";

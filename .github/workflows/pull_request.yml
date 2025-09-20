@@ -15,18 +15,18 @@ jobs:
       - name: Check out repository code
         uses: actions/checkout@v5
 
-      # Install Bun
-      - name: Setup Bun
-        uses: oven-sh/setup-bun@v2
+      # Install Node
+      - name: Setup Node
+        uses: actions/setup-node@v4
 
       # Install dependencies
       - name: Install dependencies
-        run: bun install
+        run: npm install
 
       # Lint
       - name: Run ESLint
-        run: bun run lint
+        run: npm run lint
 
       # Type check
       - name: Run TypeScript check
-        run: bun run typecheck
+        run: npm run typecheck

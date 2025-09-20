@@ -1,7 +1,7 @@
 // eslint.config.js
-import tseslint from "typescript-eslint";
+const tseslint = require("typescript-eslint");
 
-export default tseslint.config(
+module.exports = tseslint.config(
   {
     ignores: ["dist", "node_modules", "*.config.*", ".husky", "src/generated/prisma"],
   },
@@ -11,7 +11,7 @@ export default tseslint.config(
       parser: tseslint.parser,
       parserOptions: {
         project: "./tsconfig.json",
-        tsconfigRootDir: import.meta.dirname,
+        tsconfigRootDir: __dirname,
       },
       ecmaVersion: "latest",
       sourceType: "module",
