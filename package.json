@@ -5,6 +5,7 @@
   "private": true,
   "scripts": {
     "dev": "clear & bun run src/index.ts",
+    "start": "bun --hot run src/index.ts",
     "prisma:pull": "bun prisma db pull",
     "prisma:migrate": "bun prisma migrate dev",
     "prisma:format": "bun prisma format",
