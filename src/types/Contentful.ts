@@ -46,9 +46,9 @@ export type LessonFields = {
   order: LocalizedValue<number>;
   videoUrl: LocalizedValue<string>;
   content: LocalizedValue<string>;
-  videoUrlForTasks: LocalizedValue<string>;
-  tasksFile: LocalizedValue<ContentfulLink<"Asset">>;
-  quiz: LocalizedValue<ContentfulLink<"Entry">>;
+  videoUrlForTasks?: LocalizedValue<string>;
+  tasksFile?: LocalizedValue<ContentfulLink<"Asset">>;
+  quiz?: LocalizedValue<ContentfulLink<"Entry">>;
 };
 
 export type QuizFields = {

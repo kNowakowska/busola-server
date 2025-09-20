@@ -26,11 +26,6 @@ export async function signIn(
     return res.status(404).send({ error: "Użytkownik nie odnaleziony" });
   }
 
-  if (!user.isPasswordReseted && !user.password) {
-    console.error("User is not password reseted and does not have password");
-    return res.status(401).send({ error: "Nieprawidłowe dane logowania" });
-  }
-
   if (user.isPasswordReseted && user.password) {
     console.log("User is password reseted and has password");
     if (await verifyPassword(password, user.password)) {

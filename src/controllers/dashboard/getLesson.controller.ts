@@ -47,5 +47,7 @@ export async function getLesson(req: FastifyRequest, res: FastifyReply) {
     isCompleted: lesson.users[0]?.isCompleted || false,
     notes: lesson.users[0]?.notes || "",
     quizId: lesson.quiz[0]?.uuid || "",
+    tasksVideoUrl: lesson.tasksVideoUrl || "",
+    tasksFileCMSId: lesson.tasksFileCMSId || "",
   });
 }

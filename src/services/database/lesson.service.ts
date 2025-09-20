@@ -48,6 +48,8 @@ export async function getLessonById(lessonId: string, courseId: string, userId: 
       courseId: true,
       content: true,
       videoUrl: true,
+      tasksVideoUrl: true,
+      tasksFileCMSId: true,
       quiz: {
         select: {
           uuid: true,

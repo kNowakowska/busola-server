@@ -98,7 +98,7 @@ model Course {
 
   name             String
   shortDescription String  @default("")
-  description      String?
+  description      Json?
   imageCMSId       String  @default("")
   videoUrl         String?
 

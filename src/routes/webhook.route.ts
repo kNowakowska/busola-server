@@ -82,8 +82,8 @@ export async function webhookRoutes(fastify: FastifyInstance) {
                 lesson.content["en-US"],
                 lesson.order["en-US"],
                 lesson.videoUrl["en-US"],
-                lesson.videoUrlForTasks["en-US"],
-                lesson.tasksFile["en-US"].sys.id,
+                lesson.videoUrlForTasks?.["en-US"],
+                lesson.tasksFile?.["en-US"].sys.id,
               );
 
               // update quizes assigned to the lesson in DB
