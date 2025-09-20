@@ -70,11 +70,19 @@ export type AnswerFields = {
   image: LocalizedValue<ContentfulLink<"Asset">>;
 };
 
+export type PostFields = {
+  name: LocalizedValue<string>;
+  content: LocalizedValue<string>;
+  image: LocalizedValue<ContentfulLink<"Asset">>;
+  tags: LocalizedValue<string[]>;
+};
+
 export type CourseEntryEvent = ContentfulEntryEvent<CourseFields>;
 export type LessonEntryEvent = ContentfulEntryEvent<LessonFields>;
 export type QuizEntryEvent = ContentfulEntryEvent<QuizFields>;
 export type QuestionEntryEvent = ContentfulEntryEvent<QuestionFields>;
 export type AnswerEntryEvent = ContentfulEntryEvent<AnswerFields>;
+export type PostEntryEvent = ContentfulEntryEvent<PostFields>;
 
 export enum ContentfulContentType {
   Course = "courses",
@@ -82,6 +90,7 @@ export enum ContentfulContentType {
   Quiz = "quizes",
   Question = "questions",
   Answer = "answers",
+  Post = "posts",
 }
 
 export enum QuestionType {

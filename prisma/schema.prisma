@@ -172,3 +172,14 @@ model AnswerSelection {
 
   @@id([responseId, answerId])
 }
+
+model BlogPost {
+  uuid      String   @id @unique @default(dbgenerated("gen_random_uuid()")) @db.Uuid
+  createdAt DateTime @default(now()) @db.Timestamptz(6)
+  cmsId     String   @unique
+
+  name       String
+  content    Json
+  imageCMSId String
+  tags       String[]
+}
