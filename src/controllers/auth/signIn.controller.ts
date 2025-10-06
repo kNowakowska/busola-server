@@ -46,7 +46,7 @@ export async function signIn(
           sameSite: "none",
           path: "/",
           maxAge: 60 * 60, // 1 hour
-          domain: process.env.VERCEL_FRONTEND_URL!,
+          domain: new URL(process.env.VERCEL_FRONTEND_URL!).hostname,
         })
         .setCookie("refresh_token", refreshToken, {
           httpOnly: true,
@@ -54,7 +54,7 @@ export async function signIn(
           sameSite: "none",
           path: "/",
           maxAge: 60 * 60 * 24 * 7, // 7 days
-          domain: process.env.VERCEL_FRONTEND_URL!,
+          domain: new URL(process.env.VERCEL_FRONTEND_URL!).hostname,
         })
         .status(200)
         .send({ shouldResetPassword: false });
