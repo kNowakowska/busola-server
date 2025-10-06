@@ -33,6 +33,7 @@ fastify.register(fastifyJWT, {
 
 fastify.register(cors, {
   origin: [process.env.FRONTEND_URL!],
+  methods: ["GET", "POST", "OPTIONS", "HEAD"],
   credentials: true,
   maxAge: 24 * 60 * 60 * 1000, // 24 hours
 });
