@@ -23,7 +23,7 @@ fastify.register(fastifyCookie, {
     path: "/",
     secure: true,
     sameSite: "none",
-    domain: new URL(process.env.VERCEL_FRONTEND_URL!).hostname,
+    domain: new URL(process.env.FRONTEND_URL!).hostname,
   },
 });
 
@@ -32,7 +32,7 @@ fastify.register(fastifyJWT, {
 });
 
 fastify.register(cors, {
-  origin: [process.env.LOCAL_FRONTEND_URL!, process.env.VERCEL_FRONTEND_URL!],
+  origin: [process.env.FRONTEND_URL!],
   credentials: true,
   maxAge: 24 * 60 * 60 * 1000, // 24 hours
 });
