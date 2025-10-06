@@ -31,7 +31,7 @@ fastify.register(fastifyJWT, {
 });
 
 fastify.register(cors, {
-  origin: [process.env.FRONTEND_URL!],
+  origin: [process.env.LOCAL_FRONTEND_URL!, process.env.VERCEL_FRONTEND_URL!],
   credentials: true,
   maxAge: 24 * 60 * 60 * 1000, // 24 hours
 });
@@ -39,7 +39,16 @@ fastify.register(cors, {
 swaggerConfig(fastify);
 
 fastify.addHook("onRequest", (req, res, done) => {
-  if (req.url.includes("/auth") || req.url.includes("/webhook")) {
+  if (req.url.includes("/auth") || req.url.includes("/blog")) {
+    done();
+    return;
+  }
+
+  if (req.url.includes("/webhook")) {
+    const { authorization } = req.headers;
+    if (authorization !== process.env.CONTENTFUL_WEBHOOK_SECRET) {
+      return res.status(401).send({ error: "Unauthorized" });
+    }
     done();
     return;
   }
