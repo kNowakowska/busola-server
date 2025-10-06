@@ -31,7 +31,7 @@ fastify.register(fastifyJWT, {
 });
 
 fastify.register(cors, {
-  origin: [process.env.FRONTEND_URL!],
+  origin: [process.env.LOCAL_FRONTEND_URL!, process.env.VERCEL_FRONTEND_URL!],
   credentials: true,
   maxAge: 24 * 60 * 60 * 1000, // 24 hours
 });
