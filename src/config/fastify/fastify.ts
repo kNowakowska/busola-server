@@ -23,7 +23,6 @@ fastify.register(fastifyCookie, {
     path: "/",
     secure: true,
     sameSite: "none",
-    domain: process.env.DOMAIN_HOSTNAME!,
   },
 });
 

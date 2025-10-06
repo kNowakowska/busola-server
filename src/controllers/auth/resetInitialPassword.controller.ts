@@ -50,19 +50,17 @@ export async function resetInitialPassword(
   return res
     .setCookie("access_token", token, {
       httpOnly: true,
-      secure: true,
-      sameSite: "none",
+      secure: process.env.NODE_ENV === "prod",
+      sameSite: process.env.NODE_ENV === "prod" ? "lax" : "none",
       path: "/",
       maxAge: 60 * 60, // 1 hour
-      domain: process.env.DOMAIN_HOSTNAME!,
     })
     .setCookie("refresh_token", refreshToken, {
       httpOnly: true,
-      secure: true,
-      sameSite: "none",
+      secure: process.env.NODE_ENV === "prod",
+      sameSite: process.env.NODE_ENV === "prod" ? "lax" : "none",
       path: "/",
       maxAge: 60 * 60 * 24 * 7, // 7 days
-      domain: process.env.DOMAIN_HOSTNAME!,
     })
     .status(200)
     .send({ message: "Password reset successfully" });
