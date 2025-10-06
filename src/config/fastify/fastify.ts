@@ -23,7 +23,7 @@ fastify.register(fastifyCookie, {
     path: "/",
     secure: true,
     sameSite: "none",
-    domain: new URL(process.env.FRONTEND_URL!).hostname,
+    domain: process.env.DOMAIN_HOSTNAME!,
   },
 });
 

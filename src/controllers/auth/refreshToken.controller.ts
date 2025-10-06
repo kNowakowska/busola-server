@@ -28,7 +28,7 @@ export async function refreshToken(
       sameSite: "none",
       path: "/",
       maxAge: 60 * 60, // 1 hour
-      domain: new URL(process.env.FRONTEND_URL!).hostname,
+      domain: process.env.DOMAIN_HOSTNAME!,
     })
     .status(200)
     .send({ message: "Token odświeżony" });

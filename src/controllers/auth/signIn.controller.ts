@@ -46,7 +46,7 @@ export async function signIn(
           sameSite: "none",
           path: "/",
           maxAge: 60 * 60, // 1 hour
-          domain: new URL(process.env.FRONTEND_URL!).hostname,
+          domain: process.env.DOMAIN_HOSTNAME!,
         })
         .setCookie("refresh_token", refreshToken, {
           httpOnly: true,
@@ -54,7 +54,7 @@ export async function signIn(
           sameSite: "none",
           path: "/",
           maxAge: 60 * 60 * 24 * 7, // 7 days
-          domain: new URL(process.env.FRONTEND_URL!).hostname,
+          domain: process.env.DOMAIN_HOSTNAME!,
         })
         .status(200)
         .send({ shouldResetPassword: false });
