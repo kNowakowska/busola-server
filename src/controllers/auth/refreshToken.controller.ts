@@ -28,6 +28,7 @@ export async function refreshToken(
       sameSite: "none",
       path: "/",
       maxAge: 60 * 60, // 1 hour
+      domain: process.env.VERCEL_FRONTEND_URL!,
     })
     .status(200)
     .send({ message: "Token odświeżony" });

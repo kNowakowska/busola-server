@@ -54,6 +54,7 @@ export async function resetInitialPassword(
       sameSite: "none",
       path: "/",
       maxAge: 60 * 60, // 1 hour
+      domain: process.env.VERCEL_FRONTEND_URL!,
     })
     .setCookie("refresh_token", refreshToken, {
       httpOnly: true,
@@ -61,6 +62,7 @@ export async function resetInitialPassword(
       sameSite: "none",
       path: "/",
       maxAge: 60 * 60 * 24 * 7, // 7 days
+      domain: process.env.VERCEL_FRONTEND_URL!,
     })
     .status(200)
     .send({ message: "Password reset successfully" });
