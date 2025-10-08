@@ -21,8 +21,8 @@ fastify.register(fastifyCookie, {
     expires: new Date(Date.now() + 60 * 60 * 1000), // 1 hour
     httpOnly: true,
     path: "/",
-    secure: true,
-    sameSite: "none",
+    secure: process.env.NODE_ENV === "prod",
+    sameSite: "lax",
   },
 });
 
