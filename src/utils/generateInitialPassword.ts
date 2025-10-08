@@ -13,6 +13,7 @@ export function generateInitialPassword(length = 8) {
     upperCaseChars[Math.floor(Math.random() * upperCaseChars.length)],
     numberChars[Math.floor(Math.random() * numberChars.length)],
     specialChars[Math.floor(Math.random() * specialChars.length)],
+    lowerCaseChars[Math.floor(Math.random() * lowerCaseChars.length)],
   ];
 
   // Fill the remaining characters randomly from all types

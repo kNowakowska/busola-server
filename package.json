@@ -16,7 +16,9 @@
     "typecheck": "tsc --noEmit -p tsconfig.json",
     "lint": "eslint . --ext .ts,.mts,.cts",
     "format": "prettier . --check",
-    "lint-staged": "lint-staged"
+    "lint-staged": "lint-staged",
+    "test": "vitest --passWithNoTests --watch=false",
+    "test:watch": "vitest --watch --passWithNoTests"
   },
   "lint-staged": {
     "src/**/!(generated)/**/*.{ts,mts,cts}": [
@@ -33,7 +35,8 @@
     "lint-staged": "^16.1.6",
     "prettier": "^3.6.2",
     "tsx": "^4.19.0",
-    "typescript-eslint": "^8"
+    "typescript-eslint": "^8",
+    "vitest": "^3.2.4"
   },
   "peerDependencies": {
     "typescript": "^5"
