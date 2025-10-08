@@ -31,7 +31,7 @@ import {
   upsertQuiz,
 } from "../../services/database/quiz.service";
 
-export async function handleWebhook(req: FastifyRequest, res: FastifyReply) {
+export async function handleCMSWebhook(req: FastifyRequest, res: FastifyReply) {
   const payload = req.body as ContentfulEntryEvent<any>;
   console.log("Entry:", payload.sys.contentType.sys.id);
 

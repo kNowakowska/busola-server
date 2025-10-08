@@ -21,8 +21,8 @@ fastify.register(fastifyCookie, {
     expires: new Date(Date.now() + 60 * 60 * 1000), // 1 hour
     httpOnly: true,
     path: "/",
-    secure: true,
-    sameSite: "none",
+    secure: process.env.NODE_ENV === "prod",
+    sameSite: "lax",
   },
 });
 
@@ -47,7 +47,7 @@ fastify.addHook("onRequest", (req, res, done) => {
 
   if (req.url.includes("/webhook")) {
     const { authorization } = req.headers;
-    if (authorization !== process.env.CONTENTFUL_WEBHOOK_SECRET) {
+    if (authorization !== process.env.WEBHOOK_SECRET) {
       return res.status(401).send({ error: "Unauthorized" });
     }
     done();

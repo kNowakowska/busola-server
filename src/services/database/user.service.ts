@@ -63,3 +63,19 @@ export async function getUserWithCoursesByUserId(userId: string) {
     },
   });
 }
+
+export async function upsertUser(email: string, initialPassword: string) {
+  console.log("Upserting user for:", email, "with initial password:", initialPassword);
+  return prisma.user.upsert({
+    where: { email },
+    update: {},
+    create: { email, initialPassword },
+  });
+}
+
+export async function assignCourseToUser(userId: string, courseId: string) {
+  console.log("Assigning course to user:", userId, " with course id:", courseId);
+  return prisma.userToCourse.create({
+    data: { userId, courseId },
+  });
+}

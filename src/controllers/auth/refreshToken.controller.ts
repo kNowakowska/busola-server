@@ -25,7 +25,7 @@ export async function refreshToken(
     .setCookie("access_token", token, {
       httpOnly: true,
       secure: process.env.NODE_ENV === "prod",
-      sameSite: process.env.NODE_ENV === "prod" ? "lax" : "none",
+      sameSite: "lax",
       path: "/",
       maxAge: 60 * 60, // 1 hour
     })
