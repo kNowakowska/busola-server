@@ -76,3 +76,10 @@ export async function getCourseWithLessonsById(courseId: string, userId: string)
 
   return course;
 }
+
+export async function getCourseById(uuid: string) {
+  console.log(`Fetching course by id: ${uuid}`);
+  return prisma.course.findUnique({
+    where: { uuid },
+  });
+}

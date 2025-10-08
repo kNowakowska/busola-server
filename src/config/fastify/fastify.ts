@@ -47,7 +47,7 @@ fastify.addHook("onRequest", (req, res, done) => {
 
   if (req.url.includes("/webhook")) {
     const { authorization } = req.headers;
-    if (authorization !== process.env.CONTENTFUL_WEBHOOK_SECRET) {
+    if (authorization !== process.env.WEBHOOK_SECRET) {
       return res.status(401).send({ error: "Unauthorized" });
     }
     done();
