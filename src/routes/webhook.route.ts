@@ -1,11 +1,13 @@
 import type { FastifyInstance } from "fastify";
 
 import { handlerWrapper } from "../utils/handlerWrapper";
-import { handleWebhook } from "../controllers/webhook/webhook.controller";
+
+import { handleCMSWebhook } from "../controllers/webhook/cms.controller";
+import { handleShopWebhook } from "../controllers/webhook/shop.controller";
 
 export async function webhookRoutes(fastify: FastifyInstance) {
   fastify.post(
-    "/webhook",
+    "/webhook/cms",
     {
       schema: {
         tags: ["Webhook"],
@@ -17,6 +19,21 @@ export async function webhookRoutes(fastify: FastifyInstance) {
         },
       },
     },
-    handlerWrapper(handleWebhook),
+    handlerWrapper(handleCMSWebhook),
+  );
+
+  fastify.post(
+    "/webhook/shop",
+    {
+      schema: {
+        tags: ["Webhook"],
+        summary: "Online shop webhook endpoint",
+        response: {
+          200: { type: "boolean" },
+          400: { $ref: "ErrorResponse#" },
+        },
+      },
+    },
+    handlerWrapper(handleShopWebhook),
   );
 }
