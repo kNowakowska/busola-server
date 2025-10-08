@@ -65,7 +65,7 @@ export async function getUserWithCoursesByUserId(userId: string) {
 }
 
 export async function upsertUser(email: string, initialPassword: string) {
-  (console.log("Upserting user for:", email), " with initial password:", initialPassword);
+  console.log("Upserting user for:", email, "with initial password:", initialPassword);
   return prisma.user.upsert({
     where: { email },
     update: {},
