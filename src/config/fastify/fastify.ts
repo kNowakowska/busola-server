@@ -3,6 +3,7 @@ import Fastify from "fastify";
 import fastifyCookie from "@fastify/cookie";
 import fastifyJWT from "@fastify/jwt";
 import cors from "@fastify/cors";
+import websocket from "@fastify/websocket";
 
 import { swaggerConfig } from "./swagger";
 import type { UserTokenPayload } from "../../types/UserTokenPayload";
@@ -36,6 +37,8 @@ fastify.register(cors, {
   credentials: true,
   maxAge: 24 * 60 * 60 * 1000, // 24 hours
 });
+
+fastify.register(websocket);
 
 swaggerConfig(fastify);
 

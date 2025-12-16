@@ -35,6 +35,7 @@ export async function handleShopWebhook(req: FastifyRequest, res: FastifyReply) 
     }
 
     await assignCourseToUser(user.uuid, course.uuid);
+    // TODO Create a slack channel for the user
   }
 
   await sendWelcomeEmail(email, initialPassword);
