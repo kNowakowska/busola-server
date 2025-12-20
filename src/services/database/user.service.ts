@@ -88,3 +88,11 @@ export async function assignCourseToUser(userId: string, courseId: string) {
     data: { userId, courseId },
   });
 }
+
+export async function updateUserSlackChannel(id: string, slackChannel: string) {
+  console.log("Updating user slack channel for id:", id);
+  return prisma.user.update({
+    where: { uuid: id },
+    data: { slackChannel },
+  });
+}
