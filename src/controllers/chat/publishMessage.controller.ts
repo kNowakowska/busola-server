@@ -24,7 +24,8 @@ export async function publishMessage(req: FastifyRequest, res: FastifyReply) {
 
   try {
     console.log("Posting message to Slack");
-    await postMessageToSlack(user.slackChannel, message);
+    const username = user.name && user.lastName ? `${user.name} ${user.lastName}` : user.email;
+    await postMessageToSlack(user.slackChannel, message, username);
   } catch (error) {
     console.error(error);
     return res.status(400).send({ error: "Nie udało się wysłać wiadomości" });

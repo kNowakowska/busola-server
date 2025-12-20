@@ -1,4 +1,4 @@
-export async function postMessageToSlack(channel: string, message: string) {
+export async function postMessageToSlack(channel: string, message: string, studentName?: string) {
   const result = await fetch("https://slack.com/api/chat.postMessage", {
     method: "POST",
     headers: {
@@ -9,6 +9,7 @@ export async function postMessageToSlack(channel: string, message: string) {
       token: process.env.SLACK_BOT_TOKEN,
       channel,
       text: message,
+      username: studentName,
     }),
   });
 
