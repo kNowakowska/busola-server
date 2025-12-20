@@ -9,6 +9,15 @@ export async function getUserByEmail(email: string) {
   });
 }
 
+export async function getUserById(id: string) {
+  console.log("Fetching user by id:", id);
+  return prisma.user.findUnique({
+    where: {
+      uuid: id,
+    },
+  });
+}
+
 export async function updateUserPassword(email: string, password: string) {
   console.log("Updating user password for:", email);
   return prisma.user.update({
