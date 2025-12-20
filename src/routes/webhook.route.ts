@@ -4,6 +4,7 @@ import { handlerWrapper } from "../utils/handlerWrapper";
 
 import { handleCMSWebhook } from "../controllers/webhook/cms.controller";
 import { handleShopWebhook } from "../controllers/webhook/shop.controller";
+import { handleChatWebhook } from "../controllers/webhook/chat.controller";
 
 export async function webhookRoutes(fastify: FastifyInstance) {
   fastify.post(
@@ -36,4 +37,6 @@ export async function webhookRoutes(fastify: FastifyInstance) {
     },
     handlerWrapper(handleShopWebhook),
   );
+
+  fastify.post("/webhook/chat", handlerWrapper(handleChatWebhook));
 }

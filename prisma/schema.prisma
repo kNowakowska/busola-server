@@ -19,7 +19,7 @@ model User {
   isPasswordReseted Boolean?       @default(false)
   initialPassword   String?
   verificationCode  String?
-  slackChannel      String         @default("")
+  slackChannel      String?        @unique
   courses           UserToCourse[]
   lessons           UserToLesson[]
   messages          Message[]

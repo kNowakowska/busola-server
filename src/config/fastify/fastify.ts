@@ -43,7 +43,7 @@ fastify.register(websocket);
 swaggerConfig(fastify);
 
 fastify.addHook("onRequest", (req, res, done) => {
-  if (req.url.includes("/auth") || req.url.includes("/blog")) {
+  if (req.url.includes("/auth") || req.url.includes("/blog") || req.url.includes("/webhook/chat")) {
     done();
     return;
   }

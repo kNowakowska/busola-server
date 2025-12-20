@@ -96,3 +96,12 @@ export async function updateUserSlackChannel(id: string, slackChannel: string) {
     data: { slackChannel },
   });
 }
+
+export async function getUserBySlackChannelId(slackChannelId: string) {
+  console.log("Fetching user by slackChannelId:", slackChannelId);
+  return prisma.user.findUnique({
+    where: {
+      slackChannel: slackChannelId,
+    },
+  });
+}
