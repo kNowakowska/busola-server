@@ -1,3 +1,4 @@
+import type { FastifyReply, FastifyRequest } from "fastify";
 import Fastify from "fastify";
 
 import fastifyCookie from "@fastify/cookie";
@@ -15,6 +16,23 @@ declare module "fastify" {
 }
 
 const fastify = Fastify({ logger: true });
+
+function verifyToken(req: FastifyRequest, res: FastifyReply, token?: string) {
+  if (!token) {
+    console.error("No token found");
+    return res.status(401).send({ error: "Unauthorized" });
+  }
+
+  let decoded: UserTokenPayload;
+  try {
+    decoded = fastify.jwt.verify<UserTokenPayload>(token);
+  } catch (error) {
+    console.error(error);
+    return res.status(401).send({ error: "Sesja wygasła" });
+  }
+
+  req.tokenPayload = decoded;
+}
 
 fastify.register(fastifyCookie, {
   secret: process.env.JWT_SECRET!,
@@ -43,12 +61,21 @@ fastify.register(websocket);
 swaggerConfig(fastify);
 
 fastify.addHook("onRequest", (req, res, done) => {
+  if (req.url.includes("/webhook/websocket")) {
+    const { token } = req.query as { token: string };
+
+    verifyToken(req, res, token);
+
+    done();
+    return;
+  }
+
   if (req.url.includes("/auth") || req.url.includes("/blog") || req.url.includes("/webhook/chat")) {
     done();
     return;
   }
 
-  if (req.url.includes("/webhook")) {
+  if (req.url.includes("/webhook") && !req.url.includes("/webhook/websocket")) {
     const { authorization } = req.headers;
     if (authorization !== process.env.WEBHOOK_SECRET) {
       return res.status(401).send({ error: "Unauthorized" });
@@ -59,20 +86,7 @@ fastify.addHook("onRequest", (req, res, done) => {
 
   const token = req.cookies?.access_token;
 
-  if (!token) {
-    console.error("No token found");
-    return res.status(401).send({ error: "Sesja wygasła" });
-  }
-
-  let decoded: UserTokenPayload;
-  try {
-    decoded = fastify.jwt.verify<UserTokenPayload>(token);
-  } catch (error) {
-    console.error(error);
-    return res.status(401).send({ error: "Sesja wygasła" });
-  }
-
-  req.tokenPayload = decoded;
+  verifyToken(req, res, token);
 
   done();
 });

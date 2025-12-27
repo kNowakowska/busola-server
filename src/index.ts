@@ -9,10 +9,9 @@ import { chatRoutes } from "./routes/chat.route";
 
 fastify.register(authRoutes);
 fastify.register(dashboardRoutes);
+fastify.register(chatRoutes);
 
 fastify.register(webhookRoutes);
-
-fastify.register(chatRoutes);
 
 const start = async () => {
   try {
