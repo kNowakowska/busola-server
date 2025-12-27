@@ -23,6 +23,20 @@ export async function createMessage(userId: string, message: string, fromTeacher
       userId,
       message,
       fromTeacher,
+      isViewed: !fromTeacher,
+    },
+  });
+}
+
+export async function markMessageAsViewed(userId: string, messageId: string) {
+  console.log("Marking message as viewed:", messageId, " for user:", userId);
+  return prisma.message.update({
+    where: {
+      uuid: messageId,
+      userId,
+    },
+    data: {
+      isViewed: true,
     },
   });
 }
