@@ -1,8 +1,7 @@
 import { prisma } from "../../config/prisma";
 
-export async function getMessages(userId: string, pageSize = 20, page = 0) {
-  console.log("Getting messages for user:", userId, "pageSize:", pageSize, "page:", page);
-  const skip = +page * +pageSize;
+export async function getMessages(userId: string, pageSize = 10, skip = 0) {
+  console.log("Getting messages for user:", userId, "pageSize:", pageSize, "skip:", skip);
 
   return prisma.message.findMany({
     where: {
