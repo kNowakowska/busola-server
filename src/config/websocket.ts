@@ -13,17 +13,20 @@ export function addClient(userId: string, socket: WebSocket) {
   });
 }
 
-export function broadcastToUser(userId: string, payload: unknown) {
+export function broadcastToUser(userId: string, payload: unknown): boolean {
   const sockets = clientsByUser.get(userId);
-  if (!sockets) return;
+  if (!sockets) return false;
 
   const msg = JSON.stringify(payload);
   console.log("Broadcasting message to user:", userId, " message: ", msg);
+  let anySuccess = false;
   for (const ws of sockets) {
     try {
       ws.send(msg);
+      anySuccess = true;
     } catch {
       console.error("Error sending message to user:", userId, " message: ", payload);
     }
   }
+  return anySuccess;
 }
