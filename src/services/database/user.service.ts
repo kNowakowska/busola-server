@@ -9,6 +9,15 @@ export async function getUserByEmail(email: string) {
   });
 }
 
+export async function getUserById(id: string) {
+  console.log("Fetching user by id:", id);
+  return prisma.user.findUnique({
+    where: {
+      uuid: id,
+    },
+  });
+}
+
 export async function updateUserPassword(email: string, password: string) {
   console.log("Updating user password for:", email);
   return prisma.user.update({
@@ -77,5 +86,22 @@ export async function assignCourseToUser(userId: string, courseId: string) {
   console.log("Assigning course to user:", userId, " with course id:", courseId);
   return prisma.userToCourse.create({
     data: { userId, courseId },
+  });
+}
+
+export async function updateUserSlackChannel(id: string, slackChannel: string) {
+  console.log("Updating user slack channel for id:", id);
+  return prisma.user.update({
+    where: { uuid: id },
+    data: { slackChannel },
+  });
+}
+
+export async function getUserBySlackChannelId(slackChannelId: string) {
+  console.log("Fetching user by slackChannelId:", slackChannelId);
+  return prisma.user.findUnique({
+    where: {
+      slackChannel: slackChannelId,
+    },
   });
 }

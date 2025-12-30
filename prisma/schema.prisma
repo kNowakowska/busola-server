@@ -19,8 +19,10 @@ model User {
   isPasswordReseted Boolean?       @default(false)
   initialPassword   String?
   verificationCode  String?
+  slackChannel      String?        @unique
   courses           UserToCourse[]
   lessons           UserToLesson[]
+  messages          Message[]
   QuizAttempt       QuizAttempt[]
 }
 
@@ -104,6 +106,17 @@ model Course {
 
   lessons Lesson[]
   users   UserToCourse[]
+}
+
+model Message {
+  uuid        String   @id @unique @default(dbgenerated("gen_random_uuid()")) @db.Uuid
+  message     String
+  fromTeacher Boolean  @default(false)
+  createdAt   DateTime @default(now()) @db.Timestamptz(6)
+  isViewed    Boolean  @default(false)
+
+  user   User   @relation(fields: [userId], references: [uuid])
+  userId String @db.Uuid
 }
 
 model UserToCourse {
