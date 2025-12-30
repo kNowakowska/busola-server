@@ -43,16 +43,18 @@ export async function signIn(
         .setCookie("access_token", token, {
           httpOnly: true,
           secure: process.env.NODE_ENV === "dev" ? false : true,
-          sameSite: "none",
+          sameSite: process.env.NODE_ENV === "dev" ? "lax" : "none",
           path: "/",
           maxAge: 60 * 60, // 1 hour
+          domain: process.env.NODE_ENV === "dev" ? undefined : "onrender.com",
         })
         .setCookie("refresh_token", refreshToken, {
           httpOnly: true,
           secure: process.env.NODE_ENV === "dev" ? false : true,
-          sameSite: "none",
+          sameSite: process.env.NODE_ENV === "dev" ? "lax" : "none",
           path: "/",
           maxAge: 60 * 60 * 24 * 7, // 7 days
+          domain: process.env.NODE_ENV === "dev" ? undefined : "onrender.com",
         })
         .status(200)
         .send({ shouldResetPassword: false });

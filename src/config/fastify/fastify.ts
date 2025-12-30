@@ -41,7 +41,7 @@ fastify.register(fastifyCookie, {
     httpOnly: true,
     path: "/",
     secure: process.env.NODE_ENV === "dev" ? false : true,
-    sameSite: "none",
+    sameSite: process.env.NODE_ENV === "dev" ? "lax" : "none",
   },
 });
 
