@@ -40,9 +40,8 @@ fastify.register(fastifyCookie, {
     expires: new Date(Date.now() + 60 * 60 * 1000), // 1 hour
     httpOnly: true,
     path: "/",
-    secure: process.env.NODE_ENV === "prod",
-    sameSite: "lax",
-    domain: "onrender.com",
+    secure: process.env.NODE_ENV === "dev" ? false : true,
+    sameSite: "none",
   },
 });
 
