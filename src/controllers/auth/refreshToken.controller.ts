@@ -28,7 +28,6 @@ export async function refreshToken(
       sameSite: process.env.NODE_ENV === "dev" ? "lax" : "none",
       path: "/",
       maxAge: 60 * 60, // 1 hour
-      domain: process.env.NODE_ENV === "dev" ? undefined : ".onrender.com",
     })
     .status(200)
     .send({ message: "Token odświeżony" });
