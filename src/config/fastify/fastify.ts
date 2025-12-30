@@ -42,7 +42,7 @@ fastify.register(fastifyCookie, {
     path: "/",
     secure: process.env.NODE_ENV === "prod",
     sameSite: "lax",
-    domain: process.env.FRONTEND_URL?.split("://")[1],
+    domain: "onrender.com",
   },
 });
 
