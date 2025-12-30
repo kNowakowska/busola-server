@@ -16,11 +16,9 @@ export function handleWebsocketWebhook(socket: WebSocket, req: FastifyRequest) {
 
   socket.on("close", () => {
     console.log("Websocket closed", { userId });
-    socket.send(JSON.stringify({ type: "connection.closed", message: "Websocket closed" }));
   });
 
   socket.on("error", (error: Error) => {
     console.error("Websocket error", error);
-    socket.send(JSON.stringify({ type: "connection.error", message: "Websocket error" }));
   });
 }

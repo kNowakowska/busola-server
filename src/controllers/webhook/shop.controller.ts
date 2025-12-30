@@ -31,14 +31,18 @@ export async function handleShopWebhook(req: FastifyRequest, res: FastifyReply) 
 
   let user = await upsertUser(email, initialPassword);
 
-  try {
-    const channelName = `${email.toLowerCase().replace(/[@.+]/g, "_")}-${user.uuid}`;
-    const slackChannel = await createSlackChannel(channelName);
+  if (!user.slackChannel) {
+    try {
+      const channelName = `${email.toLowerCase().replace(/[@.+]/g, "_")}-${user.uuid}`;
+      const slackChannel = await createSlackChannel(channelName);
 
-    user = await updateUserSlackChannel(user.uuid, slackChannel.id);
-  } catch (error) {
-    console.error(error);
-    return res.status(400).send({ error: "Nie udało się zaktualizować danych użytkownika" });
+      user = await updateUserSlackChannel(user.uuid, slackChannel.id);
+    } catch (error) {
+      console.error(error);
+      return res.status(400).send({ error: "Nie udało się zaktualizować danych użytkownika" });
+    }
+  } else {
+    console.log("User already has a Slack channel, skipping creation");
   }
 
   for (const product of products) {

@@ -27,7 +27,7 @@ export async function createSlackChannel(name: string) {
     body: JSON.stringify({
       token: process.env.SLACK_BOT_TOKEN,
       channel: creationData?.channel?.id,
-      users: [process.env.SLACK_TEACHER_USER_ID, process.env.SLACK_WEBHOOK_APP_USER_ID],
+      users: [process.env.SLACK_TEACHER_USER_ID, process.env.SLACK_WEBHOOK_APP_USER_ID].join(","),
     }),
   });
 
