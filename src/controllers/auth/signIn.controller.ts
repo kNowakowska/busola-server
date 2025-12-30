@@ -42,15 +42,15 @@ export async function signIn(
       return res
         .setCookie("access_token", token, {
           httpOnly: true,
-          secure: process.env.NODE_ENV === "prod",
-          sameSite: "lax",
+          secure: process.env.NODE_ENV === "dev" ? false : true,
+          sameSite: "none",
           path: "/",
           maxAge: 60 * 60, // 1 hour
         })
         .setCookie("refresh_token", refreshToken, {
           httpOnly: true,
-          secure: process.env.NODE_ENV === "prod",
-          sameSite: "lax",
+          secure: process.env.NODE_ENV === "dev" ? false : true,
+          sameSite: "none",
           path: "/",
           maxAge: 60 * 60 * 24 * 7, // 7 days
         })
