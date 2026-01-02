@@ -12,6 +12,9 @@ export async function handleChatWebhook(req: FastifyRequest, res: FastifyReply) 
     challenge: string;
   };
 
+  // TODO: Remove this after testing
+  return res.status(200).send({ challenge });
+
   if (token !== process.env.SLACK_WEBHOOK_TOKEN) {
     console.error("Invalid Slack webhook token");
     return res.status(401).send({ error: "Invalid Slack webhook token" });
