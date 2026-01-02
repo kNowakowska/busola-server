@@ -8,7 +8,7 @@ import { sendMessageNotificationEmail } from "../../services/emailNotifications/
 export async function handleChatWebhook(req: FastifyRequest, res: FastifyReply) {
   const { token, event, challenge } = req.body as {
     token: string;
-    event: { text: string; user: string; channel: string };
+    event: { text: string; user: string; channel: string; subtype?: string };
     challenge: string;
   };
 
@@ -19,10 +19,15 @@ export async function handleChatWebhook(req: FastifyRequest, res: FastifyReply) 
 
   console.log("New Slack event received", event);
 
-  const { text: message, user: author, channel: slackChannelId } = event;
+  const { text: message, user: author, channel: slackChannelId, subtype } = event;
 
   if (author !== process.env.SLACK_TEACHER_USER_ID) {
     console.log("Message not from teacher, skipping");
+    return res.status(200).send({ challenge });
+  }
+
+  if (!!subtype) {
+    console.log("Message has a subtype, skipping: ", subtype);
     return res.status(200).send({ challenge });
   }
 
