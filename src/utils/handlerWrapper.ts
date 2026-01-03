@@ -7,7 +7,7 @@ export function handlerWrapper(
     try {
       return await callback(req, res, ...args);
     } catch (error) {
-      console.error(error);
+      req.log.error(error);
       return res.status(500).send({ error: "Coś poszło nie tak. Spróbuj ponownie później" });
     }
   };

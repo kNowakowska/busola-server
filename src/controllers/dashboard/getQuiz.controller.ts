@@ -6,6 +6,7 @@ import { ForbiddenError } from "../../errors/ForbiddenError";
 import { getQuizWithRandomQuestions } from "../../services/database/quiz.service";
 
 export async function getQuiz(req: FastifyRequest, res: FastifyReply) {
+  const { userId } = req.tokenPayload;
   const { quizId } = req.params as {
     courseId: string;
     lessonId: string;
@@ -13,18 +14,18 @@ export async function getQuiz(req: FastifyRequest, res: FastifyReply) {
   };
 
   if (!quizId) {
-    console.error("Invalid quizId");
+    req.log.error({ msg: "Invalid quizId", quizId, userId });
     return res.status(400).send({ error: "Nieprawidłowy identyfikator quizu" });
   }
 
   let quiz;
   try {
-    quiz = await getQuizWithRandomQuestions(quizId);
+    quiz = await getQuizWithRandomQuestions(quizId, req.log);
     if (!quiz) {
       throw new NotFoundError(`Quiz with id: ${quizId} not found`);
     }
   } catch (error) {
-    console.error(error);
+    req.log.error({ msg: "Error getting quiz", userId, quizId, error });
     if (error instanceof NotFoundError) {
       return res.status(404).send({ error: "Quiz nie znaleziony" });
     }

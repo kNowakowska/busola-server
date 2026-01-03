@@ -6,7 +6,7 @@ export async function markMessageAsViewed(req: FastifyRequest, res: FastifyReply
   const { userId } = req.tokenPayload;
   const { messageId } = req.params as { messageId: string };
 
-  const message = await markMessageAsViewedService(userId, messageId);
+  const message = await markMessageAsViewedService(userId, messageId, req.log);
 
   return res.status(200).send(message);
 }

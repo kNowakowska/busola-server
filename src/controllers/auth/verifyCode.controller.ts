@@ -12,15 +12,20 @@ export async function verifyCode(
   res: FastifyReply,
 ) {
   const { email, code } = req.body;
-  const user = await getUserByEmail(email);
+  const user = await getUserByEmail(email, req.log);
   if (!user) {
-    console.error(`User not found for email: ${email}`);
+    req.log.error({ msg: "User not found for email", email });
     return res.status(404).send({ error: "Użytkownik nie odnaleziony" });
   }
 
-  console.log("Verifying code for user:", email, code);
+  req.log.info({ msg: "Verifying code for user", email, code });
   if (!code || user.verificationCode !== code) {
-    console.error("Invalid verification code");
+    req.log.error({
+      msg: "Invalid verification code",
+      email,
+      code,
+      userVerificationCode: user.verificationCode,
+    });
     return res.status(401).send({ error: "Nieprawidłowy kod weryfikacyjny" });
   }
 

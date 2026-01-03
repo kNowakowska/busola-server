@@ -4,10 +4,10 @@ import { getUserWithCoursesByUserId } from "../../services/database/user.service
 
 export async function getCurrentUser(req: FastifyRequest, res: FastifyReply) {
   const { userId, email } = req.tokenPayload;
-  const user = await getUserWithCoursesByUserId(userId);
+  const user = await getUserWithCoursesByUserId(userId, req.log);
 
   if (!user) {
-    console.error(`User not found for userId: ${userId} and email: ${email}`);
+    req.log.error({ msg: "User not found for userId and email", userId, email });
     return res.status(404).send({ error: "Użytkownik nie odnaleziony" });
   }
 

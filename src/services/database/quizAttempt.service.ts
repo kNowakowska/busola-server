@@ -1,11 +1,13 @@
+import type { FastifyBaseLogger } from "fastify";
 import { prisma } from "../../config/prisma";
 
 export async function createQuizAttempt(
   quizId: string,
   userId: string,
-  score: number
+  score: number,
+  logger: FastifyBaseLogger,
 ) {
-  console.log("Creating quiz attempt:", { quizId, userId, score });
+  logger.info({ msg: "Creating quiz attempt", quizId, userId, score });
   return prisma.quizAttempt.create({
     data: {
       userId,
@@ -17,9 +19,10 @@ export async function createQuizAttempt(
 
 export async function updateQuizAttemptScore(
   quizAttemptId: string,
-  score: number
+  score: number,
+  logger: FastifyBaseLogger,
 ) {
-  console.log("Updating quiz attempt score:", { quizAttemptId, score });
+  logger.info({ msg: "Updating quiz attempt score", quizAttemptId, score });
   return prisma.quizAttempt.update({
     where: { uuid: quizAttemptId },
     data: {
@@ -31,13 +34,10 @@ export async function updateQuizAttemptScore(
 export async function createQuestionResponse(
   attemptId: string,
   questionId: string,
-  isCorrect: boolean
+  isCorrect: boolean,
+  logger: FastifyBaseLogger,
 ) {
-  console.log("Creating question response:", {
-    attemptId,
-    questionId,
-    isCorrect,
-  });
+  logger.info({ msg: "Creating question response", attemptId, questionId, isCorrect });
   return prisma.questionResponse.create({
     data: { attemptId, questionId, isCorrect },
   });
@@ -45,9 +45,10 @@ export async function createQuestionResponse(
 
 export async function createAnswerSelection(
   responseId: string,
-  answerId: string
+  answerId: string,
+  logger: FastifyBaseLogger,
 ) {
-  console.log("Creating answer selection:", { responseId, answerId });
+  logger.info({ msg: "Creating answer selection", responseId, answerId });
   return prisma.answerSelection.create({
     data: { responseId, answerId },
   });

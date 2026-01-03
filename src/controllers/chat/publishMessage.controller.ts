@@ -9,25 +9,26 @@ export async function publishMessage(req: FastifyRequest, res: FastifyReply) {
   const { message } = req.body as { message: string };
 
   if (!message.trim()) {
-    console.error("Invalid message");
+    req.log.error({ msg: "Invalid message", message, userId });
     return res.status(400).send({ error: "Nieprawidłowa wiadomość" });
   }
 
-  const user = await getUserById(userId);
+  const user = await getUserById(userId, req.log);
 
   if (!user?.slackChannel) {
-    console.error("User doesn't have a Slack channel");
+    req.log.error({ msg: "User doesn't have a Slack channel", userId });
     return res.status(400).send({ error: "Nie możesz wysyłać wiadomości" });
   }
 
-  const createdMessage = await createMessage(userId, message);
+  const createdMessage = await createMessage(userId, message, false, req.log);
 
   try {
-    console.log("Posting message to Slack");
     const username = user.name && user.lastName ? `${user.name} ${user.lastName}` : user.email;
+    req.log.info({ msg: "Posting message to Slack", userId, message, username });
+
     await postMessageToSlack(user.slackChannel, message, username);
   } catch (error) {
-    console.error(error);
+    req.log.error({ msg: "Error posting message to Slack", userId, message, error });
     return res.status(400).send({ error: "Nie udało się wysłać wiadomości" });
   }
 

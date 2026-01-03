@@ -15,20 +15,20 @@ export async function completeLesson(req: FastifyRequest, res: FastifyReply) {
   };
 
   if (!courseId || !lessonId) {
-    console.error("Invalid courseId or lessonId");
+    req.log.error({ msg: "Invalid courseId or lessonId", courseId, lessonId, userId });
     return res.status(400).send({ error: "Nieprawidłowy identyfikator kursu lub lekcji" });
   }
 
   let lesson, userToLesson;
 
   try {
-    lesson = await getLessonById(lessonId, courseId, userId);
+    lesson = await getLessonById(lessonId, courseId, userId, req.log);
     if (!lesson) {
       throw new NotFoundError(`Lesson with id: ${lessonId} not found`);
     }
-    userToLesson = await markLessonAsCompleted(lesson as unknown as Lesson, userId);
+    userToLesson = await markLessonAsCompleted(lesson as unknown as Lesson, userId, req.log);
   } catch (error) {
-    console.error(error);
+    req.log.error({ msg: "Error completing lesson", userId, courseId, lessonId, error });
     if (error instanceof NotFoundError) {
       return res.status(404).send({ error: "Lekcja nie znaleziona" });
     }

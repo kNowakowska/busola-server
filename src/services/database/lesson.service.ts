@@ -1,3 +1,4 @@
+import type { FastifyBaseLogger } from "fastify";
 import { prisma } from "../../config/prisma";
 
 import type { Lesson } from "../../generated/prisma";
@@ -6,13 +7,19 @@ import { ForbiddenError } from "../../errors/ForbiddenError";
 import { NotFoundError } from "../../errors/NotFoundError";
 import { InvalidPayloadError } from "../../errors/InvalidPayloadError";
 
-export async function getLessonByCmsId(cmsId: string) {
+export async function getLessonByCmsId(cmsId: string, logger: FastifyBaseLogger) {
+  logger.info({ msg: "Fetching lesson by cms id", cmsId });
   return prisma.lesson.findUnique({
     where: { cmsId },
   });
 }
 
-export async function updateLessonToCourse(lessonId: string, courseId: string) {
+export async function updateLessonToCourse(
+  lessonId: string,
+  courseId: string,
+  logger: FastifyBaseLogger,
+) {
+  logger.info({ msg: "Updating lesson to course", lessonId, courseId });
   return prisma.lesson.update({
     where: { uuid: lessonId },
     data: { courseId },
@@ -21,22 +28,35 @@ export async function updateLessonToCourse(lessonId: string, courseId: string) {
 
 export async function upsertLesson(
   cmsId: string,
-  name: string,
-  content: string,
-  order: number,
-  videoUrl?: string,
-  tasksVideoUrl?: string,
-  tasksFileCMSId?: string,
+  data: {
+    name: string;
+    content: string;
+    order: number;
+    videoUrl?: string;
+    tasksVideoUrl?: string;
+    tasksFileCMSId?: string;
+  },
+  logger: FastifyBaseLogger,
 ) {
+  logger.info({
+    msg: "Upserting lesson",
+    cmsId,
+    data,
+  });
   return prisma.lesson.upsert({
     where: { cmsId },
-    update: { name, content, videoUrl, order, tasksVideoUrl, tasksFileCMSId },
-    create: { name, content, videoUrl, order, cmsId, tasksVideoUrl, tasksFileCMSId },
+    update: { ...data },
+    create: { ...data, cmsId },
   });
 }
 
-export async function getLessonById(lessonId: string, courseId: string, userId: string) {
-  console.log(`Fetching lesson by id: ${lessonId} for course: ${courseId} and user: ${userId}`);
+export async function getLessonById(
+  lessonId: string,
+  courseId: string,
+  userId: string,
+  logger: FastifyBaseLogger,
+) {
+  logger.info({ msg: "Fetching lesson by id", lessonId, courseId, userId });
   const lesson = await prisma.lesson.findUnique({
     where: {
       uuid: lessonId,
@@ -118,7 +138,13 @@ export async function getNextLessonId(
   return nextLesson?.uuid;
 }
 
-export async function saveNotesTolesson(lesson: Lesson, userId: string, notes: string) {
+export async function saveNotesTolesson(
+  lesson: Lesson,
+  userId: string,
+  notes: string,
+  logger: FastifyBaseLogger,
+) {
+  logger.info({ msg: "Saving notes to lesson", lesson, userId, notes });
   return prisma.userToLesson.upsert({
     where: {
       userId_lessonId: {
@@ -145,7 +171,12 @@ export async function saveNotesTolesson(lesson: Lesson, userId: string, notes: s
   });
 }
 
-export async function markLessonAsCompleted(lesson: Lesson, userId: string) {
+export async function markLessonAsCompleted(
+  lesson: Lesson,
+  userId: string,
+  logger: FastifyBaseLogger,
+) {
+  logger.info({ msg: "Marking lesson as completed", lesson, userId });
   return prisma.userToLesson.upsert({
     where: {
       userId_lessonId: {

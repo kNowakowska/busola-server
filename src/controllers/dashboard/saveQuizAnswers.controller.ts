@@ -27,12 +27,12 @@ export async function saveQuizAnswers(req: FastifyRequest, res: FastifyReply) {
     return res.status(400).send({ error: "Nieprawidłowy payload" });
   }
 
-  const quiz = await getQuizById(quizId);
+  const quiz = await getQuizById(quizId, req.log);
   if (!quiz) {
     return res.status(404).send({ error: "Quiz nie znaleziony" });
   }
 
-  const quizAttempt = await createQuizAttempt(quizId, userId, 0);
+  const quizAttempt = await createQuizAttempt(quizId, userId, 0, req.log);
 
   let score = 0;
   await Promise.all(
@@ -47,12 +47,13 @@ export async function saveQuizAnswers(req: FastifyRequest, res: FastifyReply) {
         quizAttempt.uuid,
         question.uuid,
         isCorrect,
+        req.log,
       );
-      return createAnswerSelection(questionResponse.uuid, question.answer);
+      return createAnswerSelection(questionResponse.uuid, question.answer, req.log);
     }),
   );
 
-  await updateQuizAttemptScore(quizAttempt.uuid, score);
+  await updateQuizAttemptScore(quizAttempt.uuid, score, req.log);
 
   return res.status(200).send({
     scoreInPercent: Math.round((score * 100) / quiz.questionsToDrawCount),

@@ -17,27 +17,32 @@ export async function resetInitialPassword(
 ) {
   const { password, initialPassword, email } = req.body;
 
-  const user = await getUserByEmail(email);
+  const user = await getUserByEmail(email, req.log);
   if (!user) {
-    console.error(`User not found for email: ${email}`);
+    req.log.error({ msg: "User not found for email", email });
     return res.status(404).send({ error: "Użytkownik nie odnaleziony" });
   }
 
   if (user.initialPassword !== initialPassword) {
-    console.error("Initial password is incorrect");
+    req.log.error({
+      msg: "Initial password is incorrect",
+      email,
+      initialPassword,
+      userInitialPassword: user.initialPassword,
+    });
     return res.status(401).send({ error: "Nieprawidłowe dane logowania" });
   }
 
-  console.log("Validating new password", password);
+  req.log.info({ msg: "Validating new password", password });
   const validatedPassword = passwordValidator().safeParse(password);
   if (!validatedPassword.success) {
     return res.status(400).send({ error: validatedPassword.error.issues[0].message });
   }
 
   const hashedPassword = await hashPassword(validatedPassword.data);
-  await updateUserPassword(email, hashedPassword);
+  await updateUserPassword(email, hashedPassword, req.log);
 
-  console.log("Generating new tokens for user:", email);
+  req.log.info({ msg: "Generating new tokens for user", email });
   const token = fastify.jwt.sign({ email, userId: user.uuid });
   const refreshToken = fastify.jwt.sign(
     { email, userId: user.uuid },
@@ -54,7 +59,7 @@ export async function resetInitialPassword(
       sameSite: process.env.NODE_ENV === "dev" ? "lax" : "none",
       path: "/",
       maxAge: 60 * 60, // 1 hour
-      domain: process.env.NODE_ENV === "dev" ? undefined : ".knowakowska.tech",
+      domain: process.env.NODE_ENV === "dev" ? undefined : process.env.COOKIE_DOMAIN,
     })
     .setCookie("refresh_token", refreshToken, {
       httpOnly: true,
@@ -62,7 +67,7 @@ export async function resetInitialPassword(
       sameSite: process.env.NODE_ENV === "dev" ? "lax" : "none",
       path: "/",
       maxAge: 60 * 60 * 24 * 7, // 7 days
-      domain: process.env.NODE_ENV === "dev" ? undefined : ".knowakowska.tech",
+      domain: process.env.NODE_ENV === "dev" ? undefined : process.env.COOKIE_DOMAIN,
     })
     .status(200)
     .send({ message: "Password reset successfully" });

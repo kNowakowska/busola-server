@@ -11,18 +11,18 @@ export async function getCourse(req: FastifyRequest, res: FastifyReply) {
   const { courseId } = req.params as { courseId: string };
 
   if (!courseId) {
-    console.error("Invalid courseId");
+    req.log.error({ msg: "Invalid courseId", courseId, userId });
     return res.status(400).send({ error: "Nieprawidłowy identyfikator kursu" });
   }
 
   let course;
   try {
-    course = await getCourseWithLessonsById(courseId, userId);
+    course = await getCourseWithLessonsById(courseId, userId, req.log);
     if (!course) {
       throw new NotFoundError(`Course with id: ${courseId} not found`);
     }
   } catch (error) {
-    console.error(error);
+    req.log.error({ msg: "Error getting course", userId, courseId, error });
     if (error instanceof NotFoundError) {
       return res.status(404).send({ error: "Kurs nie znaleziony" });
     }

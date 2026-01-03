@@ -8,7 +8,7 @@ export async function refreshToken(
 ) {
   const { refresh_token } = req.cookies;
   if (!refresh_token) {
-    console.error("Refresh token not found");
+    req.log.error("Refresh token not found");
     return res.status(401).send({ error: "Odświeżenie sesji nie powiodło się" });
   }
 
@@ -18,7 +18,7 @@ export async function refreshToken(
     return res.status(401).send({ error: "Odświeżenie sesji nie powiodło się" });
   }
 
-  console.log("Token verification for user:", decodedRefreshToken);
+  req.log.info({ msg: "Token verification for user", decodedToken: decodedRefreshToken });
   const token = fastify.jwt.sign(decodedRefreshToken);
 
   return res
@@ -28,7 +28,7 @@ export async function refreshToken(
       sameSite: process.env.NODE_ENV === "dev" ? "lax" : "none",
       path: "/",
       maxAge: 60 * 60, // 1 hour
-      domain: process.env.NODE_ENV === "dev" ? undefined : ".knowakowska.tech",
+      domain: process.env.NODE_ENV === "dev" ? undefined : process.env.COOKIE_DOMAIN,
     })
     .status(200)
     .send({ message: "Token odświeżony" });

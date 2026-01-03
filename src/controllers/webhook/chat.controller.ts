@@ -13,41 +13,46 @@ export async function handleChatWebhook(req: FastifyRequest, res: FastifyReply) 
   };
 
   if (token !== process.env.SLACK_WEBHOOK_TOKEN) {
-    console.error("Invalid Slack webhook token");
+    req.log.error({ msg: "Invalid Slack webhook token", token });
     return res.status(401).send({ error: "Invalid Slack webhook token" });
   }
 
-  console.log("New Slack event received", event);
+  req.log.info({ msg: "New Slack event received", event: req.body });
 
   const { text: message, user: author, channel: slackChannelId, subtype } = event;
 
   if (author !== process.env.SLACK_TEACHER_USER_ID) {
-    console.log("Message not from teacher, skipping");
+    req.log.info({ msg: "Message not from teacher, skipping", author });
     return res.status(200).send({ challenge });
   }
 
   if (!!subtype) {
-    console.log("Message has a subtype, skipping: ", subtype);
+    req.log.info({ msg: "Message has a subtype, skipping", subtype });
     return res.status(200).send({ challenge });
   }
 
-  const user = await getUserBySlackChannelId(slackChannelId);
+  const user = await getUserBySlackChannelId(slackChannelId, req.log);
 
   if (!user) {
-    console.error("User not found for slack channel id: ", slackChannelId);
+    req.log.error({ msg: "User not found for slack channel id", slackChannelId });
     return res.status(404).send({ error: "User not found" });
   }
 
-  const createdMessage = await createMessage(user.uuid, message, true);
+  const createdMessage = await createMessage(user.uuid, message, true, req.log);
 
-  const success = broadcastToUser(user.uuid, { type: "message.created", message: createdMessage });
+  const success = broadcastToUser(
+    user.uuid,
+    { type: "message.created", message: createdMessage },
+    req.log,
+  );
   if (!success) {
-    console.warn(
-      "No websocket clients found for user, sending email notification instead:",
-      user.uuid,
-      user.email,
-    );
-    await sendMessageNotificationEmail(user.email);
+    req.log.warn({
+      msg: "No websocket clients found for user, sending email notification instead",
+      userId: user.uuid,
+      userEmail: user.email,
+      slackChannelId,
+    });
+    await sendMessageNotificationEmail(user.email, req.log);
   }
 
   return res.status(200).send({ challenge });

@@ -1,3 +1,4 @@
+import type { FastifyBaseLogger } from "fastify";
 import { prisma } from "../../config/prisma";
 
 import { ForbiddenError } from "../../errors/ForbiddenError";
@@ -12,7 +13,9 @@ export async function upsertCourse(
     imageCMSId: string;
     videoUrl: string;
   },
+  logger: FastifyBaseLogger,
 ) {
+  logger.info({ msg: "Upserting course", cmsId, data });
   return prisma.course.upsert({
     where: { cmsId },
     update: {
@@ -22,8 +25,12 @@ export async function upsertCourse(
   });
 }
 
-export async function getCourseWithLessonsById(courseId: string, userId: string) {
-  console.log(`Fetching course by id: ${courseId} for user: ${userId}`);
+export async function getCourseWithLessonsById(
+  courseId: string,
+  userId: string,
+  logger: FastifyBaseLogger,
+) {
+  logger.info({ msg: "Fetching course by id", courseId, userId });
   const course = await prisma.course.findUnique({
     where: {
       uuid: courseId,
@@ -77,8 +84,8 @@ export async function getCourseWithLessonsById(courseId: string, userId: string)
   return course;
 }
 
-export async function getCourseById(uuid: string) {
-  console.log(`Fetching course by id: ${uuid}`);
+export async function getCourseById(uuid: string, logger: FastifyBaseLogger) {
+  logger.info({ msg: "Fetching course by id", uuid });
   return prisma.course.findUnique({
     where: { uuid },
   });

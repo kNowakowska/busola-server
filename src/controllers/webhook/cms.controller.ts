@@ -33,29 +33,33 @@ import {
 
 export async function handleCMSWebhook(req: FastifyRequest, res: FastifyReply) {
   const payload = req.body as ContentfulEntryEvent<any>;
-  console.log("Entry:", payload.sys.contentType.sys.id);
+  req.log.info({ msg: "Entry", contentType: payload.sys.contentType.sys.id });
 
   switch (payload.sys.contentType.sys.id) {
     case ContentfulContentType.Course:
       {
         // create or update course in DB
         const course = (payload as CourseEntryEvent).fields;
-        const createdCourse = await upsertCourse(payload.sys.id, {
-          name: course.name["en-US"],
-          shortDescription: course.shortDescription["en-US"],
-          description: course.description["en-US"],
-          imageCMSId: course.image["en-US"].sys.id,
-          videoUrl: course.videoUrl["en-US"],
-        });
+        const createdCourse = await upsertCourse(
+          payload.sys.id,
+          {
+            name: course.name["en-US"],
+            shortDescription: course.shortDescription["en-US"],
+            description: course.description["en-US"],
+            imageCMSId: course.image["en-US"].sys.id,
+            videoUrl: course.videoUrl["en-US"],
+          },
+          req.log,
+        );
 
         // update lessons assigned to the course in DB
         const lessonsIds = course.lessons["en-US"].map((lesson) => lesson.sys.id);
 
         await Promise.all(
           lessonsIds.map(async (lessonId) => {
-            const lesson = await getLessonByCmsId(lessonId);
+            const lesson = await getLessonByCmsId(lessonId, req.log);
             if (lesson) {
-              await updateLessonToCourse(lesson.uuid, createdCourse.uuid);
+              await updateLessonToCourse(lesson.uuid, createdCourse.uuid, req.log);
             }
           }),
         );
@@ -67,20 +71,23 @@ export async function handleCMSWebhook(req: FastifyRequest, res: FastifyReply) {
         const lesson = (payload as LessonEntryEvent).fields;
         const createdLesson = await upsertLesson(
           payload.sys.id,
-          lesson.name["en-US"],
-          lesson.content["en-US"],
-          lesson.order["en-US"],
-          lesson.videoUrl["en-US"],
-          lesson.videoUrlForTasks?.["en-US"],
-          lesson.tasksFile?.["en-US"].sys.id,
+          {
+            name: lesson.name["en-US"],
+            content: lesson.content["en-US"],
+            order: lesson.order["en-US"],
+            videoUrl: lesson.videoUrl["en-US"],
+            tasksVideoUrl: lesson.videoUrlForTasks?.["en-US"],
+            tasksFileCMSId: lesson.tasksFile?.["en-US"].sys.id,
+          },
+          req.log,
         );
 
         // update quizes assigned to the lesson in DB
 
         if (lesson?.quiz?.["en-US"]?.sys?.id) {
-          const quiz = await getQuizByCmsId(lesson.quiz["en-US"].sys.id);
+          const quiz = await getQuizByCmsId(lesson.quiz["en-US"].sys.id, req.log);
           if (quiz) {
-            await updateQuizToLesson(quiz.uuid, createdLesson.uuid);
+            await updateQuizToLesson(quiz.uuid, createdLesson.uuid, req.log);
           }
         }
       }
@@ -93,6 +100,7 @@ export async function handleCMSWebhook(req: FastifyRequest, res: FastifyReply) {
           payload.sys.id,
           quiz.name["en-US"],
           quiz.numberOfQuestions["en-US"],
+          req.log,
         );
 
         const questionsIds = quiz.questions["en-US"].map((question) => question.sys.id);
@@ -100,9 +108,9 @@ export async function handleCMSWebhook(req: FastifyRequest, res: FastifyReply) {
         // update questions assigned to the quiz in DB
         await Promise.all(
           questionsIds.map(async (questionId) => {
-            const question = await getQuestionByCmsId(questionId);
+            const question = await getQuestionByCmsId(questionId, req.log);
             if (question) {
-              await updateQuestionToQuiz(createdQuiz.uuid, question.uuid);
+              await updateQuestionToQuiz(createdQuiz.uuid, question.uuid, req.log);
             }
           }),
         );
@@ -118,6 +126,7 @@ export async function handleCMSWebhook(req: FastifyRequest, res: FastifyReply) {
           question.name["en-US"],
           question.type["en-US"],
           question.image["en-US"].sys.id,
+          req.log,
         );
 
         const answersIds = question.options["en-US"].map((answer) => answer.sys.id);
@@ -125,9 +134,9 @@ export async function handleCMSWebhook(req: FastifyRequest, res: FastifyReply) {
         // update answers assigned to the question in DB
         await Promise.all(
           answersIds.map(async (answerId) => {
-            const answer = await getAnswerByCmsId(answerId);
+            const answer = await getAnswerByCmsId(answerId, req.log);
             if (answer) {
-              await updateAnswerToQuestion(answer.uuid, createdQuestion.uuid);
+              await updateAnswerToQuestion(answer.uuid, createdQuestion.uuid, req.log);
             }
           }),
         );
@@ -142,6 +151,7 @@ export async function handleCMSWebhook(req: FastifyRequest, res: FastifyReply) {
           answer.name["en-US"],
           answer.isCorrect["en-US"],
           answer.image["en-US"].sys.id,
+          req.log,
         );
       }
       break;
@@ -158,7 +168,10 @@ export async function handleCMSWebhook(req: FastifyRequest, res: FastifyReply) {
     //   }
     //   break;
     default:
-      console.log("Unsupported content type", payload.sys.contentType.sys.id);
+      req.log.error({
+        msg: "Unsupported content type",
+        contentType: payload.sys.contentType.sys.id,
+      });
   }
 
   return res.send(true);

@@ -1,7 +1,9 @@
+import type { FastifyBaseLogger } from "fastify";
+
 import { prisma } from "../../config/prisma";
 
-export async function getUserByEmail(email: string) {
-  console.log("Fetching user by email:", email);
+export async function getUserByEmail(email: string, logger: FastifyBaseLogger) {
+  logger.info({ msg: "Fetching user by email", email });
   return prisma.user.findUnique({
     where: {
       email,
@@ -9,8 +11,8 @@ export async function getUserByEmail(email: string) {
   });
 }
 
-export async function getUserById(id: string) {
-  console.log("Fetching user by id:", id);
+export async function getUserById(id: string, logger: FastifyBaseLogger) {
+  logger.info({ msg: "Fetching user by id", id });
   return prisma.user.findUnique({
     where: {
       uuid: id,
@@ -18,24 +20,32 @@ export async function getUserById(id: string) {
   });
 }
 
-export async function updateUserPassword(email: string, password: string) {
-  console.log("Updating user password for:", email);
+export async function updateUserPassword(
+  email: string,
+  password: string,
+  logger: FastifyBaseLogger,
+) {
+  logger.info({ msg: "Updating user password for", email });
   return prisma.user.update({
     where: { email },
     data: { password, isPasswordReseted: true },
   });
 }
 
-export async function saveUserVerificationCode(email: string, code: string) {
-  console.log("Saving user verification code for:", email, code);
+export async function saveUserVerificationCode(
+  email: string,
+  code: string,
+  logger: FastifyBaseLogger,
+) {
+  logger.info({ msg: "Saving user verification code for", email, code });
   return prisma.user.update({
     where: { email },
     data: { verificationCode: code.toString() },
   });
 }
 
-export async function getUserWithCoursesByUserId(userId: string) {
-  console.log("Fetching user by user id:", userId);
+export async function getUserWithCoursesByUserId(userId: string, logger: FastifyBaseLogger) {
+  logger.info({ msg: "Fetching user with courses by user id", userId });
   return prisma.user.findUnique({
     where: {
       uuid: userId,
@@ -73,8 +83,12 @@ export async function getUserWithCoursesByUserId(userId: string) {
   });
 }
 
-export async function upsertUser(email: string, initialPassword: string) {
-  console.log("Upserting user for:", email, "with initial password:", initialPassword);
+export async function upsertUser(
+  email: string,
+  initialPassword: string,
+  logger: FastifyBaseLogger,
+) {
+  logger.info({ msg: "Upserting user for", email, initialPassword });
   return prisma.user.upsert({
     where: { email },
     update: {},
@@ -82,23 +96,31 @@ export async function upsertUser(email: string, initialPassword: string) {
   });
 }
 
-export async function assignCourseToUser(userId: string, courseId: string) {
-  console.log("Assigning course to user:", userId, " with course id:", courseId);
+export async function assignCourseToUser(
+  userId: string,
+  courseId: string,
+  logger: FastifyBaseLogger,
+) {
+  logger.info({ msg: "Assigning course to user", userId, courseId });
   return prisma.userToCourse.create({
     data: { userId, courseId },
   });
 }
 
-export async function updateUserSlackChannel(id: string, slackChannel: string) {
-  console.log("Updating user slack channel for id:", id);
+export async function updateUserSlackChannel(
+  id: string,
+  slackChannel: string,
+  logger: FastifyBaseLogger,
+) {
+  logger.info({ msg: "Updating user slack channel for id", id });
   return prisma.user.update({
     where: { uuid: id },
     data: { slackChannel },
   });
 }
 
-export async function getUserBySlackChannelId(slackChannelId: string) {
-  console.log("Fetching user by slackChannelId:", slackChannelId);
+export async function getUserBySlackChannelId(slackChannelId: string, logger: FastifyBaseLogger) {
+  logger.info({ msg: "Fetching user by slackChannelId", slackChannelId });
   return prisma.user.findUnique({
     where: {
       slackChannel: slackChannelId,

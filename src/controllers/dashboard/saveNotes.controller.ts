@@ -16,20 +16,20 @@ export async function saveNotes(req: FastifyRequest, res: FastifyReply) {
   const { notes } = req.body as { notes: string };
 
   if (!courseId || !lessonId) {
-    console.error("Invalid courseId or lessonId");
+    req.log.error({ msg: "Invalid courseId or lessonId", courseId, lessonId, userId });
     return res.status(400).send({ error: "Nieprawidłowy identyfikator kursu lub lekcji" });
   }
 
   let lesson, userToLesson;
 
   try {
-    lesson = await getLessonById(lessonId, courseId, userId);
+    lesson = await getLessonById(lessonId, courseId, userId, req.log);
     if (!lesson) {
       throw new NotFoundError(`Lesson with id: ${lessonId} not found`);
     }
-    userToLesson = await saveNotesTolesson(lesson as unknown as Lesson, userId, notes);
+    userToLesson = await saveNotesTolesson(lesson as unknown as Lesson, userId, notes, req.log);
   } catch (error) {
-    console.error(error);
+    req.log.error({ msg: "Error saving notes", userId, courseId, lessonId, error });
     if (error instanceof NotFoundError) {
       return res.status(404).send({ error: "Lekcja nie znaleziona" });
     }

@@ -1,7 +1,13 @@
+import type { FastifyBaseLogger } from "fastify";
 import { prisma } from "../../config/prisma";
 
-export async function getMessages(userId: string, pageSize = 10, skip = 0) {
-  console.log("Getting messages for user:", userId, "pageSize:", pageSize, "skip:", skip);
+export async function getMessages(
+  userId: string,
+  pageSize = 10,
+  skip = 0,
+  logger: FastifyBaseLogger,
+) {
+  logger.info({ msg: "Getting messages for user", userId, pageSize, skip });
 
   return prisma.message.findMany({
     where: {
@@ -15,8 +21,13 @@ export async function getMessages(userId: string, pageSize = 10, skip = 0) {
   });
 }
 
-export async function createMessage(userId: string, message: string, fromTeacher = false) {
-  console.log("Creating message:", message, " for user:", userId);
+export async function createMessage(
+  userId: string,
+  message: string,
+  fromTeacher = false,
+  logger: FastifyBaseLogger,
+) {
+  logger.info({ msg: "Creating message", userId, message, fromTeacher });
   return prisma.message.create({
     data: {
       userId,
@@ -27,8 +38,12 @@ export async function createMessage(userId: string, message: string, fromTeacher
   });
 }
 
-export async function markMessageAsViewed(userId: string, messageId: string) {
-  console.log("Marking message as viewed:", messageId, " for user:", userId);
+export async function markMessageAsViewed(
+  userId: string,
+  messageId: string,
+  logger: FastifyBaseLogger,
+) {
+  logger.info({ msg: "Marking message as viewed", userId, messageId });
   return prisma.message.update({
     where: {
       uuid: messageId,

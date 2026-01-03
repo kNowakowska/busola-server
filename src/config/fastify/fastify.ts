@@ -19,7 +19,7 @@ const fastify = Fastify({ logger: true });
 
 function verifyToken(req: FastifyRequest, res: FastifyReply, token?: string) {
   if (!token) {
-    console.error("No token found");
+    req.log.error("No token found");
     return res.status(401).send({ error: "Unauthorized" });
   }
 
@@ -27,7 +27,7 @@ function verifyToken(req: FastifyRequest, res: FastifyReply, token?: string) {
   try {
     decoded = fastify.jwt.verify<UserTokenPayload>(token);
   } catch (error) {
-    console.error(error);
+    req.log.error(error);
     return res.status(401).send({ error: "Sesja wygasła" });
   }
 
@@ -42,7 +42,7 @@ fastify.register(fastifyCookie, {
     path: "/",
     secure: process.env.NODE_ENV === "dev" ? false : true,
     sameSite: process.env.NODE_ENV === "dev" ? "lax" : "none",
-    domain: process.env.NODE_ENV === "dev" ? undefined : ".knowakowska.tech",
+    domain: process.env.NODE_ENV === "dev" ? undefined : process.env.COOKIE_DOMAIN,
   },
 });
 

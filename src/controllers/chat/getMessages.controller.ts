@@ -6,7 +6,7 @@ export async function getMessages(req: FastifyRequest, res: FastifyReply) {
 
   const { pageSize = 10, skip = 0 } = req.query as { pageSize: number; skip: number };
 
-  const messages = await getMessagesService(userId, +pageSize, +skip);
+  const messages = await getMessagesService(userId, +pageSize, +skip, req.log);
 
   return res.status(200).send({
     data: messages.sort(

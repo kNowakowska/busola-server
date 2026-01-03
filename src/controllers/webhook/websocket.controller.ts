@@ -6,7 +6,7 @@ import { addClient } from "../../config/websocket";
 export function handleWebsocketWebhook(socket: WebSocket, req: FastifyRequest) {
   const userId = req?.tokenPayload?.userId;
 
-  console.log("Websocket connected", { userId, url: req.url });
+  req.log.info({ msg: "Websocket connected", userId, url: req.url });
 
   if (userId) {
     addClient(userId, socket);
@@ -15,10 +15,10 @@ export function handleWebsocketWebhook(socket: WebSocket, req: FastifyRequest) {
   socket.send(JSON.stringify({ type: "connection.opened", message: "Connected to websocket" }));
 
   socket.on("close", () => {
-    console.log("Websocket closed", { userId });
+    req.log.info({ msg: "Websocket closed", userId });
   });
 
   socket.on("error", (error: Error) => {
-    console.error("Websocket error", error);
+    req.log.error({ msg: "Websocket error", userId, error });
   });
 }

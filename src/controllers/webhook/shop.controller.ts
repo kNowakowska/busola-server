@@ -29,36 +29,40 @@ export async function handleShopWebhook(req: FastifyRequest, res: FastifyReply) 
 
   const initialPassword = generateInitialPassword();
 
-  let user = await upsertUser(email, initialPassword);
+  let user = await upsertUser(email, initialPassword, req.log);
 
   if (!user.slackChannel) {
     try {
+      // TODO Replace with user name and last name if available
       const channelName = `${email.toLowerCase().replace(/[@.+]/g, "_")}-${user.uuid}`;
       const slackChannel = await createSlackChannel(channelName);
 
-      user = await updateUserSlackChannel(user.uuid, slackChannel.id);
+      user = await updateUserSlackChannel(user.uuid, slackChannel.id, req.log);
     } catch (error) {
-      console.error(error);
+      req.log.error({ msg: "Error creating Slack channel", error });
       return res.status(400).send({ error: "Nie udało się zaktualizować danych użytkownika" });
     }
   } else {
-    console.log("User already has a Slack channel, skipping creation");
+    req.log.info({
+      msg: "User already has a Slack channel, skipping creation",
+      email,
+      slackChannel: user.slackChannel,
+    });
   }
 
   for (const product of products) {
     // TODO: Replace code with identifier if needed or search by course code instead of id
-    const course = await getCourseById(product.code);
+    const course = await getCourseById(product.code, req.log);
     if (!course) {
-      console.error(`Course with id: ${product.code} not found. User: ${email}`);
+      req.log.error({ msg: "Course not found", courseId: product.code, email, userId: user.uuid });
       // TODO Add notification on slack for dev team
       continue;
     }
 
-    await assignCourseToUser(user.uuid, course.uuid);
-    // TODO Create a slack channel for the user
+    await assignCourseToUser(user.uuid, course.uuid, req.log);
   }
 
-  await sendWelcomeEmail(email, initialPassword);
+  await sendWelcomeEmail(email, initialPassword, req.log);
 
   return res.send(true);
 }
