@@ -8,6 +8,8 @@ type ResetInitialPasswordPayload = {
   email: string;
   initialPassword: string;
   password: string;
+  name: string;
+  lastName: string;
 };
 
 export async function resetInitialPassword(
@@ -15,7 +17,7 @@ export async function resetInitialPassword(
   res: FastifyReply,
   fastify: FastifyInstance,
 ) {
-  const { password, initialPassword, email } = req.body;
+  const { password, initialPassword, email, name, lastName } = req.body;
 
   const user = await getUserByEmail(email, req.log);
   if (!user) {
@@ -40,7 +42,7 @@ export async function resetInitialPassword(
   }
 
   const hashedPassword = await hashPassword(validatedPassword.data);
-  await updateUserPassword(email, hashedPassword, req.log);
+  await updateUserPassword({ email, password: hashedPassword, name, lastName }, req.log);
 
   req.log.info({ msg: "Generating new tokens for user", email });
   const token = fastify.jwt.sign({ email, userId: user.uuid });

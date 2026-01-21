@@ -76,8 +76,10 @@ export function swaggerConfig(fastify: FastifyInstance) {
               email: { type: "string", format: "email" },
               initialPassword: { type: "string" },
               password: { type: "string" },
+              name: { type: "string" },
+              lastName: { type: "string" },
             },
-            required: ["email", "initialPassword", "password"],
+            required: ["email", "initialPassword", "password", "name", "lastName"],
           },
           ResetPasswordRequest: {
             type: "object",
@@ -351,8 +353,10 @@ export function swaggerConfig(fastify: FastifyInstance) {
       email: { type: "string", format: "email" },
       initialPassword: { type: "string" },
       password: { type: "string" },
+      name: { type: "string" },
+      lastName: { type: "string" },
     },
-    required: ["email", "initialPassword", "password"],
+    required: ["email", "initialPassword", "password", "name", "lastName"],
   });
 
   fastify.addSchema({

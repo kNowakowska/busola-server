@@ -1,4 +1,5 @@
 import type { FastifyBaseLogger } from "fastify";
+import { omit } from "lodash";
 
 import { prisma } from "../../config/prisma";
 
@@ -21,14 +22,18 @@ export async function getUserById(id: string, logger: FastifyBaseLogger) {
 }
 
 export async function updateUserPassword(
-  email: string,
-  password: string,
+  data: {
+    email: string;
+    password: string;
+    name: string;
+    lastName: string;
+  },
   logger: FastifyBaseLogger,
 ) {
-  logger.info({ msg: "Updating user password for", email });
+  logger.info({ msg: "Updating user password for", email: data.email });
   return prisma.user.update({
-    where: { email },
-    data: { password, isPasswordReseted: true },
+    where: { email: data.email },
+    data: { ...omit(data, "email"), isPasswordReseted: true },
   });
 }
 
