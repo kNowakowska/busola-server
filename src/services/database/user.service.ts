@@ -25,8 +25,8 @@ export async function updateUserPassword(
   data: {
     email: string;
     password: string;
-    name: string;
-    lastName: string;
+    name?: string;
+    lastName?: string;
   },
   logger: FastifyBaseLogger,
 ) {

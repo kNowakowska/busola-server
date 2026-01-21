@@ -39,7 +39,7 @@ export async function resetPassword(
   }
 
   const hashedPassword = await hashPassword(password);
-  await updateUserPassword(email, hashedPassword, req.log);
+  await updateUserPassword({ email, password: hashedPassword }, req.log);
 
   return res.status(200).send({ message: "Hasło zostało zresetowane" });
 }
