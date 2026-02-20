@@ -71,7 +71,12 @@ fastify.addHook("onRequest", (req, res, done) => {
     return;
   }
 
-  if (req.url.includes("/auth") || req.url.includes("/blog") || req.url.includes("/webhook/chat")) {
+  if (
+    req.url.includes("/auth") ||
+    req.url.includes("/blog") ||
+    req.url.includes("/webhook/chat") ||
+    req.url.includes("/contact")
+  ) {
     done();
     return;
   }

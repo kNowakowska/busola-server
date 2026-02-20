@@ -6,10 +6,12 @@ import { authRoutes } from "./routes/auth.route";
 import { dashboardRoutes } from "./routes/dashboard.route";
 import { webhookRoutes } from "./routes/webhook.route";
 import { chatRoutes } from "./routes/chat.route";
+import { contactRoutes } from "./routes/contact.route";
 
 fastify.register(authRoutes);
 fastify.register(dashboardRoutes);
 fastify.register(chatRoutes);
+fastify.register(contactRoutes);
 
 fastify.register(webhookRoutes);
 
